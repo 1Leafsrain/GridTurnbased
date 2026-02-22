@@ -1,0 +1,61 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &6506491535345629159
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6333398563514822568}
+  - component: {fileID: 582629869230856109}
+  m_Layer: 0
+  m_Name: HandManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6333398563514822568
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6506491535345629159}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 7.05636, y: -0.19541, z: 2.19612}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &582629869230856109
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6506491535345629159}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1575282a4ac3e2041a94e7b049c1ff2c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HandManager
+  maxHandSize: 3
+  cardPrefab: {fileID: 4975713774275220871, guid: e275844cb043eca4f833f33ca390bd0b, type: 3}
+  splineContainer: {fileID: 0}
+  spawnPoint: {fileID: 0}
+  HandPosition: {fileID: 0}
+  HandSlot: []
+  HandPositionTrans: []
+  EnemymaxHandSize: 2
+  EnemycardPrefab: {fileID: 4975713774275220871, guid: b177acf74feca564aa439f55201bec41, type: 3}
+  EnemyspawnPoint: {fileID: 0}
+  EnemyHandPosition: {fileID: 0}
+  EnemyHandSlot: []
+  EnemyHandPositionTrans: []
+  playerTurn: 0
+  enemyTurn: 0
