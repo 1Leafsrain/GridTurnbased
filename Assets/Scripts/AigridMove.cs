@@ -328,12 +328,13 @@ public class AigridMove : MonoBehaviour
 
             Vector3 targetWorldPos = GetWorldPositionFromGrid(targetGridCell);
 
-            // Cek tabrakan
-            if (!Physics2D.OverlapCircle(targetWorldPos, 0.2f, obstacleLayer))
+            Collider2D hit = Physics2D.OverlapCircle(targetWorldPos, 0.2f, blockingLayers);
+            if (hit == null || hit.gameObject == gameObject)
             {
                 ExecuteMove(targetWorldPos);
                 return;
             }
+
         }
 
         // Jika benar-benar tidak bisa bergerak
