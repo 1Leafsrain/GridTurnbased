@@ -1106,6 +1106,14 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 519420033}
     - target: {fileID: 2870514414293132397, guid: f269e7c8bd9b2d04e9b3dceb9ea9b0f4, type: 3}
+      propertyPath: max_enemy
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2870514414293132397, guid: f269e7c8bd9b2d04e9b3dceb9ea9b0f4, type: 3}
+      propertyPath: min_enemy
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2870514414293132397, guid: f269e7c8bd9b2d04e9b3dceb9ea9b0f4, type: 3}
       propertyPath: turnSystem
       value: 
       objectReference: {fileID: 6519583103476700635}

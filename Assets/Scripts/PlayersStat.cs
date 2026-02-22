@@ -6,11 +6,12 @@ public class PlayersStat : MonoBehaviour
     [SerializeField] public int health = 100;
     [SerializeField] public int mana = 20;
     [SerializeField] public List<GameObject> cardDeck;
+    public DamageText damageText;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        //damageText = GetComponent<DamageText>();
     }
 
     // Update is called once per frame
@@ -22,5 +23,6 @@ public class PlayersStat : MonoBehaviour
     public void TakeDamage(int dmg)
     {
         health -= dmg;
+        damageText.GetDamage(dmg.ToString());
     }
 }

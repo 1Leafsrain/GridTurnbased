@@ -9,10 +9,11 @@ public class EnemyCard : MonoBehaviour
     public int curHealth;
     public int damage = 10;
     public int target = 1;
-
+    
     public EnemyTipe enemyTipe;
 
     [SerializeField] private GameObject palyerHand;
+    [SerializeField] private PlayersStat playerStat;
     [SerializeField] private GameObject[] hand;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -23,6 +24,7 @@ public class EnemyCard : MonoBehaviour
 
     public void Awake()
     {
+        playerStat = FindObjectsByType<PlayersStat>(FindObjectsSortMode.None)[0];
         hand = GameObject.FindGameObjectsWithTag("EnemyHand");
     }
 
@@ -43,7 +45,7 @@ public class EnemyCard : MonoBehaviour
 
     public void ActionCard()
     {
-        int hitTarget = Random.Range(0, target);
+        /*int hitTarget = Random.Range(0, target);
         if (target == 0) { return; }
         for (int i = 0; i < target; i++)
         {
@@ -57,9 +59,16 @@ public class EnemyCard : MonoBehaviour
             {
                 Debug.Log("Ngga ada");
             }
-        }
+        }*/
+
     }
 
+    public void Attack()
+    {
+               playerStat.TakeDamage(damage);
+        
+        Debug.Log("ngasih damage " + damage);
+    }
     public void EnemyTipes()
     {
         switch (enemyTipe) 

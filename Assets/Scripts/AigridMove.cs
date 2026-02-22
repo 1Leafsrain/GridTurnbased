@@ -10,10 +10,13 @@ public class AigridMove : MonoBehaviour
     public int action = 3;
     public LayerMask obstacleLayer;
     public float decisionInterval = 0.4f;
+    [Header("Collision")]
+    public LayerMask blockingLayers;
 
     [Header("Target & Combat")]
     public Transform playerTarget;
     public EnemyCard enemyCard;
+    
 
     // Status
     private int curAction;
@@ -178,6 +181,7 @@ public class AigridMove : MonoBehaviour
 
     void MoveTowardsPlayer(Vector2Int aiGridCell, Vector2Int playerGridCell)
     {
+
         Vector2Int bestMove = aiGridCell;
         int bestDistance = ManhattanDistance(aiGridCell, playerGridCell);
         bool foundValidMove = false;
@@ -201,7 +205,12 @@ public class AigridMove : MonoBehaviour
 
             // Konversi ke posisi dunia di tengah tile
             Vector3 targetWorldPos = GetWorldPositionFromGrid(targetGridCell);
-
+            Collider2D hit = Physics2D.OverlapCircle(targetWorldPos, 0.2f, blockingLayers);
+            if (hit == null || hit.gameObject == gameObject)
+            {
+                ExecuteMove(targetWorldPos);
+                return;
+            }
             // Cek tabrakan
             if (Physics2D.OverlapCircle(targetWorldPos, 0.2f, obstacleLayer))
             {
