@@ -23,7 +23,7 @@ public class HandManager : MonoBehaviour
     [SerializeField] public RightCardDropArea[] EnemyHandSlot;
     public Transform[] EnemyHandPositionTrans;
 
-    private List<GameObject> handCards = new();
+    public List<GameObject> handCards = new();
 
     [SerializeField] public bool playerTurn;
     [SerializeField] public bool enemyTurn;
@@ -79,8 +79,8 @@ public class HandManager : MonoBehaviour
     }
     public void Update()
     {
-       // playerIsAvailable();
-        
+        // playerIsAvailable();
+        updateHands();
     }
 
     public void DrawCard()
@@ -94,6 +94,18 @@ public class HandManager : MonoBehaviour
     {
         if (instance?.prefabReference != null) discardPile.Add(instance.prefabReference);
         
+    }
+
+    public void updateHands()
+    {
+        for(int i = 0; i < handCards.Count; i++)
+        {
+            if(handCards[i] == null)
+            {
+                handCards.RemoveAt(i);
+                i--;
+            }
+        }
     }
 
     private void UpdateCardPositions()
@@ -115,20 +127,29 @@ public class HandManager : MonoBehaviour
     }
 
     public void SpawnCard() 
-    { if (drawPile == null) return; 
-        Shuffle(drawPile); 
+    { //if (drawPile == null) return; 
+        Shuffle(drawPile);
+        Debug.Log("awal spawn");
         if (handCards.Count == maxHandSize) { return; } 
         for (int i = 1; i < HandPositionTrans.Length; i++) { 
-            bool fulls = HandPositionTrans[i].GetComponentInChildren<LeftCardDropArea>().isFull; 
-            if (fulls == false && i < maxHandSize + 1) { var prefab = drawPile[1-1]; 
-                drawPile.RemoveAt(0); //var inst = Instantiate(prefab, handParent);
-                HandPositionTrans[i].GetComponentInChildren<LeftCardDropArea>().Chek(); 
-                GameObject g = Instantiate(prefab, HandPositionTrans[i].position, HandPositionTrans[i].rotation); 
+            
+                bool fulls = HandPositionTrans[i].GetComponentInChildren<LeftCardDropArea>().isFull;
+            
+            
+            Debug.Log("pas spawn");
+            if (fulls == false && i < maxHandSize + 1) { 
+                var prefab = drawPile[0]; 
+                 //var inst = Instantiate(prefab, handParent);
+                HandPositionTrans[i].GetComponentInChildren<LeftCardDropArea>().Chek();
+                drawPile.RemoveAt(0);
+                GameObject g = Instantiate(prefab, HandPositionTrans[i].position, HandPositionTrans[i].rotation);
+                Debug.Log("pas spawn");
                 g.transform.SetParent(HandPositionTrans[i].transform); handCards.Add(g); 
             } else { Debug.Log("slot " + i + " penuh anjay"); 
             } 
         } 
     }
+
     public GameObject SpawnOne()
     {
         //if (drawPile.Count == 0) ReshuffleFromDiscard();
