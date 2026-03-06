@@ -9,6 +9,12 @@ TagManager:
   - EnemyHand
   - Tile
   - Hands
+  - HealthText
+  - ActionText
+  - Box
+  - Environment
+  - grid
+  - spawner
   layers:
   - Default
   - TransparentFX
@@ -17,7 +23,7 @@ TagManager:
   - Water
   - UI
   - obstacleLayer
-  - 
+  - front
   - 
   - 
   - 

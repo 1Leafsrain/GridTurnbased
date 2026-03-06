@@ -53,6 +53,7 @@ public class Card : MonoBehaviour
     public bool masukJarak;
     public int hitTarget;
 
+    public AigridMove enemys;
     public GameObject player;
     public PlayersStat playerk;
     public EnemyCard enemy;
@@ -96,7 +97,7 @@ public class Card : MonoBehaviour
     {
         player = GameObject.FindGameObjectWithTag("Player");
         // playerk = GameObject.FindAnyObjectByType<PlayersStat>();
-        enemy = GameObject.FindAnyObjectByType<EnemyCard>();
+        //enemy = GameObject.FindAnyObjectByType<EnemyCard>();
         //enemyPos = enemy.GetComponentInParent<GameObject>();
         HandPosition = GameObject.FindGameObjectsWithTag("EnemyHand");
     }
@@ -168,7 +169,10 @@ public class Card : MonoBehaviour
         {
             Debug.Log("kacau men");
            
+            enemys = collision.GetComponent<AigridMove>();
             targetCard = collision.GetComponent<EnemyCard>();
+            //targetCard.TakeDamage(1);
+            //Destroy(this.gameObject);
             //targetCard.TakeDamage(1);
             //Destroy(this.gameObject);
         }
@@ -332,22 +336,21 @@ public class Card : MonoBehaviour
 
     void CalculateAndMove()
     {
-        if (enemy != null) 
+        if (enemys != null) 
         {
             //var enemys = FindObjectsOfType<AigridMove>();
-            var enemys = FindObjectsByType<AigridMove>(FindObjectsSortMode.None);
-            float[] distances = new float[enemys.Length];
+            //var enemys = FindObjectsByType<AigridMove>(FindObjectsSortMode.None);
+            //float distances = new float[enemys.Length];
             bool anyInRange = false;
             
-            for (int i = 0; i < enemys.Length; i++) 
-            {
-                float dist = Vector2.Distance(player.transform.position, enemys[i].transform.position);
-                distances[i] = dist;
+            
+                float dist = Vector2.Distance(player.transform.position, enemys.transform.position);
+                //distances[i] = dist;
 
                 if (dist <= jarakArea)
                     anyInRange = true;
-            }
-            kumpulanJaraks = distances;
+            
+            //kumpulanJaraks = distances;
             masukJarak = anyInRange;
         }
 

@@ -66,7 +66,7 @@ public class TurnSystem : MonoBehaviour
     public void stagePertama()
     {
         currentStage = Stage.first;
-        handManager.playerIsAvailable();
+        //handManager.playerIsAvailable();
         TurnStage();
     }
     void Update()
@@ -143,7 +143,7 @@ public class TurnSystem : MonoBehaviour
         }
     }
 
-    public void TriggerEnemyCard()
+    /*public void TriggerEnemyCard()
     {
         if (handEnemyTrans.Length == 0) { return; }
         for (int i = 0; i < handEnemyTrans.Length; i++)
@@ -154,7 +154,7 @@ public class TurnSystem : MonoBehaviour
                 enemyHand[i].GetComponentInChildren<EnemyCard>().ActionCard();
             }
         }
-    }
+    }*/
 
     public void preparePlayer()
     {
@@ -202,6 +202,7 @@ public class TurnSystem : MonoBehaviour
             case Stage.first:
                 Debug.Log("First Stage - Preparation");
                 EndTurnButton.SetActive(true);
+                handManager.playerIsAvailable();
                 handManager.SpawnCard();
                 StartCoroutine(FirstStage(0.5f));
                 break;

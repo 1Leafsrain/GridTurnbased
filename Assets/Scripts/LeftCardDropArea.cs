@@ -19,7 +19,7 @@ public class LeftCardDropArea : MonoBehaviour, ICardDropArea
     public bool spawnHand;
     public void Start()
     {
-        isFull = false;
+        //isFull = false;
         //cards = GetComponentInChildren<Card>();
         turnSystem = FindAnyObjectByType<TurnSystem>();
     }

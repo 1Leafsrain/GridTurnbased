@@ -1,15 +1,23 @@
-using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
+using UnityEngine;
 
 public class GenerateGridTile : MonoBehaviour
 {
+    public GameObject player;
+
+    public GameObject box;
+
     public float Width = 20;
     public float Height = 20;
     public float tileSize = 1;
     public GameObject grid_object;
     public GameObject wall_object;
+    public List<GameObject> wall_objects;
     public GameObject player_object;
     public GameObject door_object;
+    public GameObject[] door_objects;
     public spawnnerEnemy spawnnerEnemy;
     public int minDoors = 2;
     public int maxDoors = 5;
@@ -17,23 +25,23 @@ public class GenerateGridTile : MonoBehaviour
     public int max_enemy;
     public TurnSystem turnSystem;
     public HandManager HandManager;
-    public folllowMc folllowMc;
+    public folllowMc[] folllowMc;
     private List<Vector2Int> doorPositions = new List<Vector2Int>();
 
-    public List<Card> card= new List<Card>();
+    private Vector2Int playerGridPosition;
 
-    void Start()
-    {
-        
-    }
+    public List<Card> card = new List<Card>();
+
+    void Start() { }
 
     public void Awake()
     {
         CreateGrid();
         turnSystem = GameObject.FindAnyObjectByType<TurnSystem>();
         HandManager = GameObject.FindAnyObjectByType<HandManager>();
-        folllowMc = GameObject.FindAnyObjectByType<folllowMc>();
+        
     }
+
     private void CreateGrid()
     {
         // 1. Kumpulkan posisi yang bisa jadi pintu
@@ -101,30 +109,77 @@ public class GenerateGridTile : MonoBehaviour
             }
         }
 
-        // 5. SPAWN PLAYER DI SAMPING PINTU (bukan random di tengah)
+        // 5. SPAWN PLAYER DI SAMPING PINTU
         SpawnPlayerNearDoor();
-        folllowMc.Ikut();
 
-        // 6. SPAWN MUSUH
+        
+        if (player != null)
+        {
+            playerGridPosition = GetGridPositionFromWorld(player.transform.position);
+            Debug.Log($"Posisi grid pemain: {playerGridPosition}");
+            folllowMc = GameObject.FindObjectsOfType<folllowMc>();
+            foreach (var folllowMc in folllowMc)
+            {
+                folllowMc.Ikut();
+                Debug.LogError("Playerrrrrrrrrrrrr");
+            }
+        }
+        else
+        {
+            Debug.LogError("Player tidak ditemukan setelah spawn!");
+            return;
+        }
+
+        
+            
+
+        // 6. SPAWN MUSUH dan object lainnya
         if (spawnnerEnemy != null)
         {
-            spawnnerEnemy.GetComponent<spawnnerEnemy>().RefreshTileList();
-            int lingkup = Random.Range(min_enemy, max_enemy);
-            for(int i = 0; i < lingkup; i++)
-            {
-                spawnnerEnemy.GetComponent<spawnnerEnemy>().spawn();
-            }
+            spawnnerEnemy.RefreshTileList();
+
             
+
+            spawnnerEnemy.ExcludePosition(playerGridPosition);
+
+            int lingkup = Random.Range(min_enemy, max_enemy);
+            for (int i = 0; i < lingkup; i++)
+            {
+                spawnnerEnemy.spawnBox();
+            }
+        }
+
+        if (spawnnerEnemy != null)
+        {
+            spawnnerEnemy.RefreshTileList();
+
+            
+            spawnnerEnemy.ExcludePosition(playerGridPosition);
+
+            int lingkup = Random.Range(min_enemy, max_enemy);
+            for (int i = 0; i < lingkup; i++)
+            {
+                spawnnerEnemy.spawn();
+            }
         }
 
         Debug.Log($"Grid dibuat dengan {doorPositions.Count} pintu");
 
         //7
-        
         turnSystem.stagePertama();
+    }
+    
+    private IEnumerator endStage(float waktu)
+    {
+        spawnnerEnemy.enemyReset();
+        yield return new WaitForSeconds(waktu);
+        CreateGrid();
+    }
+
+    public void restartScene()
+    {
         
-        //HandManager.playerIsAvailable();
-        
+        StartCoroutine(endStage(1f));
         
     }
 
@@ -140,65 +195,67 @@ public class GenerateGridTile : MonoBehaviour
         return false;
     }
 
-    // FUNGSI BARU: Spawn Player di Samping Pintu
+    
+    Vector2Int GetGridPositionFromWorld(Vector2 worldPosition)
+    {
+        int gridX = Mathf.RoundToInt((worldPosition.y + 0.5f) / tileSize);
+        int gridY = Mathf.RoundToInt((worldPosition.x + 0.5f) / tileSize);
+        return new Vector2Int(gridX, gridY);
+    }
+
     void SpawnPlayerNearDoor()
     {
-        // Pastikan ada pintu
         if (doorPositions.Count == 0)
         {
             Debug.LogError("Tidak ada pintu untuk spawn player!");
-            SpawnPlayerRandomly(); // Fallback ke random jika tidak ada pintu
+            SpawnPlayerRandomly();
             return;
         }
 
-        // 1. Pilih satu pintu secara acak
         int randomDoorIndex = Random.Range(0, doorPositions.Count);
         Vector2Int doorPos = doorPositions[randomDoorIndex];
-
-        // 2. Tentukan posisi player di SAMPING pintu (ke dalam)
         Vector2Int playerPos = GetPositionNextToDoor(doorPos);
 
-        // 3. Spawn player di posisi tersebut
         float kurang = 0.5f;
         float posX = playerPos.y * tileSize - kurang;
         float posY = playerPos.x * tileSize - kurang;
 
-        Instantiate(player_object, new Vector2(posX, posY), Quaternion.identity);
+        if (player_object != null && player != null)
+        {
+            player.transform.position = new Vector2(posX, posY);
+            return;
+        }
 
+        Instantiate(player_object, new Vector2(posX, posY), Quaternion.identity);
+        player = GameObject.FindGameObjectWithTag("Player");
         Debug.Log($"Player spawned di samping pintu: Pintu({doorPos.x},{doorPos.y}) -> Player({playerPos.x},{playerPos.y})");
     }
 
-    // FUNGSI: Dapatkan posisi di samping pintu (ke dalam)
     Vector2Int GetPositionNextToDoor(Vector2Int doorPos)
     {
         int playerX = doorPos.x;
         int playerY = doorPos.y;
 
-        // Pintu di TEMBOK KIRI (x = 1)
         if (doorPos.x == 1)
         {
-            playerX = 2; // Geser ke kanan (masuk ke dalam)
+            playerX = 2;
         }
-        // Pintu di TEMBOK KANAN (x = Width)
         else if (doorPos.x == Width)
         {
-            playerX = (int)Width - 1; // Geser ke kiri (masuk ke dalam)
+            playerX = (int)Width - 1;
         }
-        // Pintu di TEMBOK BAWAH (y = 1)
         else if (doorPos.y == 1)
         {
-            playerY = 2; // Geser ke atas (masuk ke dalam)
+            playerY = 2;
         }
-        // Pintu di TEMBOK ATAS (y = Height)
         else if (doorPos.y == Height)
         {
-            playerY = (int)Height - 1; // Geser ke bawah (masuk ke dalam)
+            playerY = (int)Height - 1;
         }
 
         return new Vector2Int(playerX, playerY);
     }
 
-    // Fungsi lama (untuk fallback)
     void SpawnPlayerRandomly()
     {
         int randomX = Random.Range(2, (int)Width);
@@ -209,7 +266,7 @@ public class GenerateGridTile : MonoBehaviour
         float posY = randomX * tileSize - kurang;
 
         Instantiate(player_object, new Vector2(posX, posY), Quaternion.identity);
-
+        player = GameObject.FindGameObjectWithTag("Player");
         Debug.Log($"Player spawned RANDOM at: ({randomX}, {randomY})");
     }
 }

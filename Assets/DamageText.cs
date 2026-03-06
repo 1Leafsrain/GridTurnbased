@@ -24,7 +24,19 @@ public class DamageText : MonoBehaviour
         messageText.text = "-" + jumlah;
         StartCoroutine(ShowsDamage());
     }
-    
+
+    public void GetHealth(string jumlah)
+    {
+        messageText.text = "HP :" + jumlah;
+        //StartCoroutine(ShowsDamage());
+    }
+
+    public void getAction(string jumlah)
+    {
+        messageText.text = "Actions :" + jumlah;
+        //StartCoroutine(ShowsDamage());
+    }
+
     private IEnumerator ShowsDamage()
     {
         messageText.gameObject.SetActive(true);

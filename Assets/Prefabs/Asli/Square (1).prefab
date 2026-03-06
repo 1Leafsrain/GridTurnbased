@@ -13,6 +13,8 @@ GameObject:
   - component: {fileID: 1895215701580496038}
   - component: {fileID: 7525089386392537919}
   - component: {fileID: 1226808633072645881}
+  - component: {fileID: 7605845294081822865}
+  - component: {fileID: 5632105152248316055}
   m_Layer: 7
   m_Name: Square (1)
   m_TagString: Player
@@ -110,6 +112,7 @@ MonoBehaviour:
   stop:
     serializedVersion: 2
     m_Bits: 64
+  actionText: {fileID: 0}
 --- !u!95 &7525089386392537919
 Animator:
   serializedVersion: 7
@@ -153,6 +156,81 @@ MonoBehaviour:
   - {fileID: 4975713774275220871, guid: e275844cb043eca4f833f33ca390bd0b, type: 3}
   - {fileID: 4975713774275220871, guid: e275844cb043eca4f833f33ca390bd0b, type: 3}
   damageText: {fileID: 5234632753253762113}
+  healthText: {fileID: 0}
+  turnText: {fileID: 0}
+--- !u!61 &7605845294081822865
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1000686867129998105}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 4, y: 4}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 1.2, y: 1.2}
+  m_EdgeRadius: 0
+--- !u!50 &5632105152248316055
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1000686867129998105}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!1 &3909123055964913662
 GameObject:
   m_ObjectHideFlags: 0
@@ -257,7 +335,7 @@ RectTransform:
   m_GameObject: {fileID: 5783833607706416391}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.0021128943, y: 0.0036161726, z: 1}
+  m_LocalScale: {x: 0.0010151797, y: 0.0023505122, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 683872267658856112}
@@ -265,7 +343,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 1.14}
+  m_AnchoredPosition: {x: 0, y: 0.93}
   m_SizeDelta: {x: 920.6, y: 339.19998}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &2583118046874848252
@@ -371,7 +449,7 @@ RectTransform:
   m_GameObject: {fileID: 8793303763999101340}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 3.725, y: 3.285, z: 1}
+  m_LocalScale: {x: 4.2371874, y: 3.285, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1670552749049076861}
@@ -436,13 +514,13 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 57.82
+  m_fontSizeBase: 57.82
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535

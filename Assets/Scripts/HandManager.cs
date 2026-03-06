@@ -29,7 +29,7 @@ public class HandManager : MonoBehaviour
     [SerializeField] public bool enemyTurn;
 
     [SerializeField] public GameObject players;
-    [SerializeField] public List<Card> deck;
+    [SerializeField] public List<Card> deck ;
 
     // deck system
     public int nomor;
@@ -42,6 +42,7 @@ public class HandManager : MonoBehaviour
 
     public List<GameObject> cards = new List<GameObject>();
     public List<GameObject> drawPile = new List<GameObject>();
+    public List<GameObject> drawPileDefault = new List<GameObject>();
     public List<GameObject> discardPile = new List<GameObject>();
 
     public void Start()
@@ -66,7 +67,7 @@ public class HandManager : MonoBehaviour
         
         //HandSlot = HandPosition.GetComponentsInChildren<RightCardDropArea>();
         //HandPositionTrans = HandPosition.GetComponentsInChildren<Transform>();
-        HandPositionTrans = HandPosition.GetComponentsInChildren<Transform>();
+        //HandPositionTrans = HandPosition.GetComponentsInChildren<Transform>();
         //EnemyHandPositionTrans = EnemyHandPosition.GetComponentsInChildren<Transform>();
         // SpawnEnemyCard();
 
@@ -75,7 +76,12 @@ public class HandManager : MonoBehaviour
     public void playerIsAvailable()
     {
         players = GameObject.FindGameObjectWithTag("Player");
-        drawPile = players.GetComponent<PlayersStat>().cardDeck;
+        drawPileDefault = players.GetComponent<PlayersStat>().cardDeck;
+       foreach (var item in drawPileDefault)
+        {
+            drawPile.Add(item);
+        }
+        
     }
     public void Update()
     {
@@ -130,19 +136,32 @@ public class HandManager : MonoBehaviour
     { //if (drawPile == null) return; 
         Shuffle(drawPile);
         Debug.Log("awal spawn");
-        if (handCards.Count == maxHandSize) { return; } 
-        for (int i = 1; i < HandPositionTrans.Length; i++) { 
+
+        if (handCards.Count == 0 && drawPile.Count <= 0)
+        {
+            foreach (var item in discardPile)
+            {
+                drawPile.Add(item);
+            }
+            //drawPile.Add(discardPile);
+        }
+        if (handCards.Count == maxHandSize) 
+        { 
+            return; 
+        } 
+        for (int i = 0; i < HandPositionTrans.Length; i++) {
             
-                bool fulls = HandPositionTrans[i].GetComponentInChildren<LeftCardDropArea>().isFull;
-            
-            
+            bool fulls = HandPositionTrans[i].GetComponentInChildren<LeftCardDropArea>().isFull;
             Debug.Log("pas spawn");
-            if (fulls == false && i < maxHandSize + 1) { 
+            if (fulls == false && i < maxHandSize) { 
                 var prefab = drawPile[0]; 
                  //var inst = Instantiate(prefab, handParent);
                 HandPositionTrans[i].GetComponentInChildren<LeftCardDropArea>().Chek();
+                //discardPile.Add(prefab);
                 drawPile.RemoveAt(0);
+                
                 GameObject g = Instantiate(prefab, HandPositionTrans[i].position, HandPositionTrans[i].rotation);
+                
                 Debug.Log("pas spawn");
                 g.transform.SetParent(HandPositionTrans[i].transform); handCards.Add(g); 
             } else { Debug.Log("slot " + i + " penuh anjay"); 
@@ -182,7 +201,7 @@ public class HandManager : MonoBehaviour
             }
         }
     }
-    public void TriggerEnemyCard()
+    /*public void TriggerEnemyCard()
     {
         if (EnemyHandPositionTrans.Length == 0) { return; }
         for (int i = 1; i < EnemyHandPositionTrans.Length; i++)
@@ -202,7 +221,7 @@ public class HandManager : MonoBehaviour
             }
         }
         //stages = stage.end;
-    }
+    }*/
     public void Shuffle(List<Card> pile)
     {
         for (int i = 0; i < pile.Count; i++)
