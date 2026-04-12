@@ -19,6 +19,7 @@ public class AigridMove : MonoBehaviour
     
 
     // Status
+    public bool inAction = false;
     private int curAction;
     private float decisionTimer = 0f;
     private bool hasAttackedThisTurn = false;
@@ -181,7 +182,7 @@ public class AigridMove : MonoBehaviour
 
     void MoveTowardsPlayer(Vector2Int aiGridCell, Vector2Int playerGridCell)
     {
-
+        inAction = true;
         Vector2Int bestMove = aiGridCell;
         int bestDistance = ManhattanDistance(aiGridCell, playerGridCell);
         bool foundValidMove = false;
@@ -366,6 +367,7 @@ public class AigridMove : MonoBehaviour
 
     void AttackPlayer()
     {
+        inAction = true;
         if (playerStats != null)
         {
             playerStats.TakeDamage(enemyCard.damage);
@@ -384,7 +386,7 @@ public class AigridMove : MonoBehaviour
     void EndEnemyTurn()
     {
         if (isTurnEnding) return;
-
+        inAction = false;
         isTurnEnding = true;
         canMove = false;
 
@@ -411,13 +413,19 @@ public class AigridMove : MonoBehaviour
     // Dipanggil oleh TurnSystem setiap awal giliran musuh
     public void ResetAction()
     {
-        canMove = true;
+        
         curAction = action;
         hasAttackedThisTurn = false;
         decisionTimer = 0f;
         isTurnEnding = false;
 
         Debug.Log("Enemy actions reset");
+    }
+
+    public void ResetAndMove()
+    {
+        ResetAction();
+        canMove = true;
     }
 
     public void SetTarget(Transform newTarget)

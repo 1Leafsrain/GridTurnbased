@@ -35,18 +35,23 @@ public class GridMove : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        actionText.getAction(action.ToString());
-        if (curAction <= 0)
+        if (freeMove == true)
         {
-            if (freeMove == true) 
-            { 
-                canMove = true;
-            }
-            else
-            {
-                canMove = false;
-            }
+            canMove = true;
+            curAction = 3;
+        }
+        
+        actionText.getAction(action.ToString());
+        if (curAction <= 0 && freeMove == false)
+        {
             
+                canMove = false;
+
+
+        }
+        else
+        {
+            canMove = true;
         }
         transform.position =Vector3.MoveTowards(transform.position, movePoint.position, moveSpeed * Time.deltaTime); //ngikutin transform point
         /*if(Vector3.Distance(transform.position, movePoint.position) <= 0.5f) // kalo jarak nya pas baru bisa maju lagi biar ngga melesat jauh

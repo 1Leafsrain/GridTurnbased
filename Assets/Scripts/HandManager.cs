@@ -6,6 +6,13 @@ using UnityEngine.XR;
 
 public class HandManager : MonoBehaviour
 {
+    [SerializeField] public List<CardData> cardData;
+    [SerializeField] public List<CardData> dataDeck = new List<CardData>();
+    [SerializeField] public List<Card> cardDeck = new List<Card>();
+    [SerializeField] public List<CardData> discarddeck = new List<CardData>();
+    public Card card;
+    [SerializeField] public List<Card> cardDeckHand = new List<Card>();
+
     public static HandManager Instance { get; private set; }
     [SerializeField] public int maxHandSize;
     [SerializeField] private GameObject cardPrefab;
@@ -29,7 +36,7 @@ public class HandManager : MonoBehaviour
     [SerializeField] public bool enemyTurn;
 
     [SerializeField] public GameObject players;
-    [SerializeField] public List<Card> deck ;
+    //[SerializeField] public List<Card> deck ;
 
     // deck system
     public int nomor;
@@ -40,23 +47,23 @@ public class HandManager : MonoBehaviour
     public enum stages { awal, tengah, akhir }
     public stages tahap;
 
-    public List<GameObject> cards = new List<GameObject>();
-    public List<GameObject> drawPile = new List<GameObject>();
-    public List<GameObject> drawPileDefault = new List<GameObject>();
-    public List<GameObject> discardPile = new List<GameObject>();
+    //public List<GameObject> cards = new List<GameObject>();
+    //public List<CardData> drawPile = new List<CardData>();
+    //public List<CardData> cardDatas = new List<CardData>();
+    //public List<GameObject> discardPile = new List<GameObject>();
 
     public void Start()
     {
-        
+        //setupData();
         //drawPile = cards;
         playerTurn = false;
     }
 
     public void Awake()
     {
+        //setupData();
 
-        
-        if(players != null)
+        if (players != null)
         {
             Debug.Log("player ada");
         }
@@ -65,24 +72,29 @@ public class HandManager : MonoBehaviour
             Debug.Log("player ngga ada");
         }
         
-        //HandSlot = HandPosition.GetComponentsInChildren<RightCardDropArea>();
-        //HandPositionTrans = HandPosition.GetComponentsInChildren<Transform>();
-        //HandPositionTrans = HandPosition.GetComponentsInChildren<Transform>();
-        //EnemyHandPositionTrans = EnemyHandPosition.GetComponentsInChildren<Transform>();
-        // SpawnEnemyCard();
-
-
-    }
-    public void playerIsAvailable()
-    {
-        players = GameObject.FindGameObjectWithTag("Player");
-        drawPileDefault = players.GetComponent<PlayersStat>().cardDeck;
-       foreach (var item in drawPileDefault)
-        {
-            drawPile.Add(item);
-        }
         
+
+
     }
+
+    public void setupData()
+    {
+        foreach (var item in cardData)
+        {
+            dataDeck.Add(item);
+        }
+    }
+    
+
+    //public void playerIsAvailable()
+    //{
+
+    //    foreach (var item in cardData)
+    //    {
+    //        drawPile.Add(item);
+    //    }
+        
+    //}
     public void Update()
     {
         // playerIsAvailable();
@@ -96,11 +108,11 @@ public class HandManager : MonoBehaviour
         
         //UpdateCardPositions();
     }
-    public void DiscardInstance(Card instance)
-    {
-        if (instance?.prefabReference != null) discardPile.Add(instance.prefabReference);
+    //public void DiscardInstance(Card instance)
+    //{
+    //    if (instance?.prefabReference != null) discardPile.Add(instance.prefabReference);
         
-    }
+    //}
 
     public void updateHands()
     {
@@ -133,8 +145,34 @@ public class HandManager : MonoBehaviour
     }
 
     public void SpawnCard() 
-    { //if (drawPile == null) return; 
-        Shuffle(drawPile);
+    {
+        Debug.Log("belum spawn");
+        if (dataDeck.Count == 0) return;
+        Debug.Log("udah spawn");
+        for (int i = 0; i < HandPositionTrans.Length; i++)
+        {
+            bool fulls = HandPositionTrans[i].GetComponentInChildren<LeftCardDropArea>().isFull;
+            if (fulls == false && i < maxHandSize)
+            {
+                // var prefab = dataDeck[0];
+                if (dataDeck.Count == 0) break;
+                HandPositionTrans[i].GetComponentInChildren<LeftCardDropArea>().Chek();
+                int nomor = Random.Range(0, dataDeck.Count);
+                var posisi = new Vector3(HandPositionTrans[i].position.x, HandPositionTrans[i].position.y, HandPositionTrans[i].position.z - 3f);
+                var g = Instantiate(card, posisi, HandPositionTrans[i].rotation);
+                g.setup(new Model(dataDeck[nomor]));
+                discarddeck.Add(dataDeck[nomor]);
+                g.transform.SetParent(HandPositionTrans[i].transform);
+                cardDeckHand.Add(g);
+            }
+            else
+            {
+                Debug.Log("slot " + i + " penuh anjay");
+            }
+        }
+
+        //if (drawPile == null) return; 
+        /*Shuffle(drawPile);
         Debug.Log("awal spawn");
 
         if (handCards.Count == 0 && drawPile.Count <= 0)
@@ -166,19 +204,19 @@ public class HandManager : MonoBehaviour
                 g.transform.SetParent(HandPositionTrans[i].transform); handCards.Add(g); 
             } else { Debug.Log("slot " + i + " penuh anjay"); 
             } 
-        } 
+        } */
     }
 
-    public GameObject SpawnOne()
-    {
-        //if (drawPile.Count == 0) ReshuffleFromDiscard();
-        if (drawPile.Count == 0) return null;
-        var prefab = drawPile[drawPile.Count - 1];
-        drawPile.RemoveAt(drawPile.Count - 1);
-        var inst = Instantiate(prefab, handParent);
-        ArrangeHand();
-        return inst;
-    }
+    //public GameObject SpawnOne()
+    //{
+    //    //if (drawPile.Count == 0) ReshuffleFromDiscard();
+    //    if (drawPile.Count == 0) return null;
+    //    var prefab = drawPile[drawPile.Count - 1];
+    //    drawPile.RemoveAt(drawPile.Count - 1);
+    //    var inst = Instantiate(prefab, handParent);
+    //    ArrangeHand();
+    //    //return inst;
+    //}
 
     public void SpawnEnemyCard()
     {
@@ -233,10 +271,10 @@ public class HandManager : MonoBehaviour
 
     
 
-    public void emptyDiscard()
-    {
-        discardPile.Clear();
-    }
+    //public void emptyDiscard()
+    //{
+    //    discardPile.Clear();
+    //}
     void Shuffle(List<GameObject> list)
     {
         for (int i = list.Count - 1; i > 0; i--)

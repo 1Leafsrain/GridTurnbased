@@ -52,7 +52,10 @@ public class endDoor : MonoBehaviour
         int randomIndex = Random.Range(0, isi.Length);
         //GameObject item = Instantiate(isi[randomIndex], transform.position, Quaternion.identity);
         Reset = GameObject.FindGameObjectWithTag("grid");
+        player = GameObject.FindGameObjectWithTag("Player");
+        player.GetComponent<GridMove>().freeMove = false;
         Reset.GetComponent<GenerateGridTile>().restartScene();
         
+
     }
 }

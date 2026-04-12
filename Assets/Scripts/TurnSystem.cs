@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -17,7 +18,8 @@ public class TurnSystem : MonoBehaviour
 
     public TMP_Text turnText;
     public GridMove playerObj;
-    public AigridMove enemyObj;
+    public List<AigridMove> enemyObj;
+    //public AigridMove enemyObj;
     public GameObject panelMenang;
 
     [SerializeField] public bool enemyTurn;
@@ -56,7 +58,15 @@ public class TurnSystem : MonoBehaviour
         GameObject enemy = GameObject.FindGameObjectWithTag("EnemyHand");
         if (enemy != null)
         {
-            enemyObj = enemy.GetComponent<AigridMove>();
+            foreach (var enemyObjs in FindObjectsOfType<AigridMove>())
+            {
+                if (enemyObjs.gameObject.CompareTag("EnemyHand") && !enemyObj.Contains(enemyObjs))
+                {
+
+                    this.enemyObj.Add(enemyObjs);
+                }
+            }
+            
         }
         if (Input.GetKeyUp(KeyCode.L))
         {
@@ -202,8 +212,7 @@ public class TurnSystem : MonoBehaviour
             case Stage.first:
                 Debug.Log("First Stage - Preparation");
                 EndTurnButton.SetActive(true);
-                handManager.playerIsAvailable();
-                handManager.SpawnCard();
+                
                 StartCoroutine(FirstStage(0.5f));
                 break;
 
@@ -254,11 +263,7 @@ public class TurnSystem : MonoBehaviour
         Debug.Log("Enemy ended turn");
         currentStage = Stage.end;
 
-        // Nonaktifkan pergerakan musuh
-        if (enemyObj != null)
-        {
-            enemyObj.canMove = false;
-        }
+        
 
         TurnStage();
     }
@@ -276,8 +281,10 @@ public class TurnSystem : MonoBehaviour
         Debug.Log("Drawing cards...");
         preparePlayer();
         setupCard();
+        handManager.setupData();
+        
         yield return new WaitForSeconds(waktu);
-
+        handManager.SpawnCard();
         currentStage = Stage.firstMiddle;
 
         // Aktifkan pergerakan pemain
@@ -295,22 +302,32 @@ public class TurnSystem : MonoBehaviour
         // Memberi waktu untuk transisi
         yield return new WaitForSeconds(waktu);
         Debug.Log("Player turn started");
+
+        
     }
 
     private IEnumerator StartEnemyTurn()
     {
+        ActionManager.Instance.ExecuteEffects();
+        Debug.Log("Executing effects...");
+
+        yield return new WaitForSeconds(1f);
+
         Debug.Log("Starting enemy turn...");
 
-        // Tunggu sebentar sebelum musuh mulai bergerak
+        
         yield return new WaitForSeconds(0.5f);
-
-        // Aktifkan pergerakan musuh
-        if (enemyObj != null)
+        
+        int i;
+        for(i = 0; i < enemyObj.Count; i++)
         {
-            enemyObj.ResetAction();
-            enemyObj.canMove = true;
-        }
+            
 
+            int index = i;
+            enemyObj[i].ResetAndMove();              
+            yield return new WaitUntil(() => !enemyObj[i].canMove);
+            
+        }
         Debug.Log("Enemy can move now");
     }
 
@@ -330,11 +347,11 @@ public class TurnSystem : MonoBehaviour
 
         if (player == null)
         {
-            // Game over logic here
+            // Game over 
             yield break;
         }
 
-        // Reset action pemain untuk turn berikutnya
+        
         if (playerObj != null)
         {
             playerObj.resetAction();
@@ -342,7 +359,16 @@ public class TurnSystem : MonoBehaviour
 
         // Nonaktifkan pergerakan semua karakter
         if (playerObj != null) playerObj.canMove = false;
-        if (enemyObj != null) enemyObj.canMove = false;
+        if (enemyObj != null)
+        {
+            foreach (var enemys in enemyObj)
+            {
+                if (enemys != null)
+                {
+                    enemys.canMove = false;
+                }
+            }
+        }
 
         yield return new WaitForSeconds(waktu);
 
@@ -360,6 +386,6 @@ public class TurnSystem : MonoBehaviour
 
         GUI.Label(new Rect(10, 10, 300, 30), $"Current Stage: {currentStage}", style);
         GUI.Label(new Rect(10, 40, 300, 30), $"Player Can Move: {playerObj != null && playerObj.canMove}", style);
-        GUI.Label(new Rect(10, 70, 300, 30), $"Enemy Can Move: {enemyObj != null && enemyObj.canMove}", style);
+        //GUI.Label(new Rect(10, 70, 300, 30), $"Enemy Can Move: {enemyObj != null && enemyObj.canMove}", style);
     }
 }

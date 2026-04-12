@@ -1,4 +1,5 @@
 
+using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -13,22 +14,19 @@ public class Card : MonoBehaviour
     public float[] kumpulanJaraks;
     public GameObject prefabReference;
 
-    [SerializeField] private SpriteRenderer cardImage;
-    [SerializeField] private TMP_Text title;
-    [SerializeField] private TMP_Text cost;
+    
 
     public  CardData cardData;
-    public Card(CardData cardData)
-    {
-        this.cardData = cardData;
-        Effect = cardData.effect;
-        Cost = cardData.cost;
-    }
 
-    public Sprite sprite { get => cardData.sprite; }
-    public string Title { get => cardData.name; }
-    public int Cost { get; set; }
-    public string Effect { get; set; }
+
+    [SerializeField] public TextMeshProUGUI title;
+    [SerializeField] public TextMeshProUGUI damages;
+    [SerializeField] public TextMeshProUGUI cost;
+    [SerializeField] public SpriteRenderer image;
+    [SerializeField] public List<PlainEffect> effects;
+    [SerializeField] public int Area;
+
+    private Model model;
 
     private Collider2D col;
     public bool fullss;
@@ -43,10 +41,11 @@ public class Card : MonoBehaviour
 
     public int maxHealth = 100;
     public int curHealth = 100;
-    public int attack = 10;
+    public int attack;
     public float tolerance = -0.05f;
     Collider2D triggerCol;
     public EnemyCard targetCard;
+    public GameObject targets;
     public int damage = 10;
     public int target = 1;
     public int jarakArea;
@@ -84,21 +83,29 @@ public class Card : MonoBehaviour
 
     void Awake()
     {
-        //CalculateAndMove();
-        
+        cekPlayer();
         triggerCol = GetComponent<Collider2D>();
         col = GetComponent<Collider2D>();
-        
-        //mainCamera = Camera.main;
 
+    }
 
+    public void setup(Model model)
+    {
+        this.model = model;
+        title.text = model.nama;
+        cost.text = model.cost;
+        Area = model.Area;
+        attack = model.damage;
+        foreach (PlainEffect effect in model.effects)
+        {
+            effects = model.effects;
+        }
+        //image.sprite = model.gambar;
+        //damages.text = model.damage.ToString();
     }
     public void cekPlayer()
     {
         player = GameObject.FindGameObjectWithTag("Player");
-        // playerk = GameObject.FindAnyObjectByType<PlayersStat>();
-        //enemy = GameObject.FindAnyObjectByType<EnemyCard>();
-        //enemyPos = enemy.GetComponentInParent<GameObject>();
         HandPosition = GameObject.FindGameObjectsWithTag("EnemyHand");
     }
     public void Update()
@@ -111,10 +118,6 @@ public class Card : MonoBehaviour
         {
             Destroy(this.gameObject);
         }
-        //if (Input.GetKeyUp(KeyCode.V)) 
-       // {
-        //    tipeSerangan();
-        //}
     }
 
     void OnMouseDown()
@@ -168,53 +171,21 @@ public class Card : MonoBehaviour
         if (collision.gameObject.CompareTag("EnemyHand"))
         {
             Debug.Log("kacau men");
-           
+            targets = collision.gameObject;
             enemys = collision.GetComponent<AigridMove>();
             targetCard = collision.GetComponent<EnemyCard>();
-            //targetCard.TakeDamage(1);
-            //Destroy(this.gameObject);
-            //targetCard.TakeDamage(1);
-            //Destroy(this.gameObject);
+            
         }
     }
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("EnemyHand"))
         {
-
+            targets = null;
             targetCard = null;
-            //targetCard.TakeDamage(1);
-            //Destroy(this.gameObject);
-        }
-    }
-
-    /*public void OnTriggerEnter2D(Collider2D collision)
-    {
-        if(collision.gameObject.CompareTag("EnemyHand"))
-        {
-            Debug.Log("kacau men");
-        }
-    }
-
-    /*private void OnTriggerStay2D(Collider2D other)
-    {
-        // bounds dari trigger dan objek lain
-        Bounds t = triggerCol.bounds;
-        Bounds o = other.GetComponent<Collider2D>().bounds;
-
-        // cek apakah bottom objek (o.min.y) kira-kira sama dengan top trigger (t.max.y)
-        bool verticalMatch = Mathf.Abs(o.min.y - t.max.y) <= tolerance;
-
-        // cek apakah center x objek berada dalam lebar trigger (agar benar-benar "di atas")
-        bool horizontalInside = (o.center.x >= t.min.x) && (o.center.x <= t.max.x);
-
-        if (verticalMatch && horizontalInside) 
-        {
             
-            other.gameObject.GetComponent<EnemyCard>().TakeDamage(100);
         }
-    }*/
-
+    }
 
     private void OnMouseUp()
     {
@@ -222,8 +193,14 @@ public class Card : MonoBehaviour
         {
             if(set == true && masukJarak == true)
             {
-                targetCard.GetComponent<EnemyCard>().TakeDamage(100);
-                HandManager.Instance?.DiscardInstance(this);
+                if (effects != null)
+                {
+                    foreach (PlainEffect effect in effects)
+                    {
+                        Debug.Log("Applying effect: " + effect.GetType().Name);
+                        effect.OnBattle(targets, attack);
+                    }
+                }
                 Destroy(this.gameObject);
             }
             
@@ -287,14 +264,12 @@ public class Card : MonoBehaviour
     {
 
         hitTarget = Random.Range(0, target + 1);
-       // if (target == 0) { return; }
         for (int i = 0; i <= hitTarget; i++)
         {
             HandPosition[i].GetComponentInChildren<EnemyCard>();
             if (i == hitTarget)
             {
                  HandPosition[hitTarget].GetComponent<EnemyCard>().TakeDamage(damage);
-                //Debug.Log("ngasih damage " + damage);
                 tipeSerangan();
             }
             else
@@ -338,62 +313,20 @@ public class Card : MonoBehaviour
     {
         if (enemys != null) 
         {
-            //var enemys = FindObjectsOfType<AigridMove>();
-            //var enemys = FindObjectsByType<AigridMove>(FindObjectsSortMode.None);
-            //float distances = new float[enemys.Length];
+            
             bool anyInRange = false;
             
             
                 float dist = Vector2.Distance(player.transform.position, enemys.transform.position);
-                //distances[i] = dist;
+                
 
-                if (dist <= jarakArea)
+                if (dist <= Area)
                     anyInRange = true;
             
-            //kumpulanJaraks = distances;
             masukJarak = anyInRange;
         }
 
-        //jarakFloat = distance; // simpan sebagai float jika diperlukan
-        //masukJarak = distance <= jarakArea;
-        //Debug.Log("kacau men");
-
-        /*
-        Vector2Int playerGridPos = new Vector2Int(
-            Mathf.RoundToInt(player.transform.position.x),
-            Mathf.RoundToInt(player.transform.position.y)
-        );
         
-        Vector2Int aiGridPos = new Vector2Int(
-
-           Mathf.RoundToInt(enemy.transform.position.x),
-           Mathf.RoundToInt(enemy.transform.position.y)
-        );
-        
-        foreach (var enemy in enemys)
-            {
-                jaraks = Vector2.Distance(player.transform.position, enemy.transform.position);
-            }
-            foreach (var enemy in enemys)
-            {
-                if (jaraks <= jarakArea)
-                {
-                    masukJarak = true;
-                }
-                else
-                {
-                    masukJarak = false;
-                }
-            }
-            
-        
-
-
-        Vector2Int distance = playerGridPos - aiGridPos;
-        Vector2Int distanceAttack = aiGridPos - playerGridPos;
-        jaraks = distance;*/
-
-
     }
 
 }

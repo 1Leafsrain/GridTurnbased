@@ -108,6 +108,7 @@ MonoBehaviour:
   movePoint: {fileID: 2038131892377899494}
   action: 3
   curAction: 0
+  freeMove: 0
   canMove: 0
   stop:
     serializedVersion: 2
@@ -152,9 +153,7 @@ MonoBehaviour:
   cardDeck:
   - {fileID: 4975713774275220871, guid: e275844cb043eca4f833f33ca390bd0b, type: 3}
   - {fileID: 4975713774275220871, guid: e275844cb043eca4f833f33ca390bd0b, type: 3}
-  - {fileID: 4975713774275220871, guid: e275844cb043eca4f833f33ca390bd0b, type: 3}
-  - {fileID: 4975713774275220871, guid: e275844cb043eca4f833f33ca390bd0b, type: 3}
-  - {fileID: 4975713774275220871, guid: e275844cb043eca4f833f33ca390bd0b, type: 3}
+  - {fileID: 4975713774275220871, guid: 5897c191556ee594f942ed91079cfc1a, type: 3}
   damageText: {fileID: 5234632753253762113}
   healthText: {fileID: 0}
   turnText: {fileID: 0}

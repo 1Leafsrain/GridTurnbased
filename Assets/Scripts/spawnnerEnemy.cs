@@ -31,10 +31,7 @@ public class spawnnerEnemy : MonoBehaviour
         enemy = GameObject.FindGameObjectsWithTag("EnemyHand");
         BoxS = GameObject.FindGameObjectsWithTag("Box");
         Environment = GameObject.FindGameObjectsWithTag("Environment");
-        if(enemy == null || enemy.Length == 0)
-        {
-            player.GetComponent<GridMove>().freeMove = true;
-        }
+        
             enemyCheck(); // Bisa diaktifkan jika diperlukan
     }
 
@@ -43,10 +40,12 @@ public class spawnnerEnemy : MonoBehaviour
         if (enemy == null || enemy.Length == 0)
         {
             spawnDoor();
+            player.GetComponent<GridMove>().freeMove = true;
             Debug.LogWarning("Semua musuh mati, spawn pintu");
         }
         else
         {
+            player.GetComponent<GridMove>().freeMove = false;
             return;
         }
     }
@@ -163,5 +162,6 @@ public class spawnnerEnemy : MonoBehaviour
         {
             Destroy(obj);
         }
+        player.GetComponent<GridMove>().freeMove = false;
     }
 }
