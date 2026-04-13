@@ -1,4 +1,5 @@
 
+using System;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
@@ -8,7 +9,7 @@ public class AreaDamage : PlainEffect
     public int radius = 1;
     public GameObject TargetEnemy;
     private int damageAmount = 1;
-    public override void OnBattle(GameObject target, int value)
+    public override void OnBattle(GameObject target, int value, Enum @enum)
     {
         for (int ax = -radius; ax <= radius; ax++) 
         { 

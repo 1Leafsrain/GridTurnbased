@@ -170,7 +170,7 @@ public class Card : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("EnemyHand"))
         {
-            Debug.Log("kacau men");
+            //Debug.Log("kacau men");
             targets = collision.gameObject;
             enemys = collision.GetComponent<AigridMove>();
             targetCard = collision.GetComponent<EnemyCard>();
@@ -198,7 +198,7 @@ public class Card : MonoBehaviour
                     foreach (PlainEffect effect in effects)
                     {
                         Debug.Log("Applying effect: " + effect.GetType().Name);
-                        effect.OnBattle(targets, attack);
+                        effect.OnBattle(targets, attack, UserType.player);
                     }
                 }
                 Destroy(this.gameObject);
@@ -258,6 +258,7 @@ public class Card : MonoBehaviour
     {
         
         curHealth -= dmg;
+        //playerk.curHealth = curHealth;
     }
 
     public void ActionCard()

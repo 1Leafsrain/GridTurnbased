@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -25,7 +26,7 @@ public class Piercing : PlainEffect
     Vector2 gridPlayer ;
 
     public GameObject target;
-    public override void OnBattle(GameObject target, int value)
+    public override void OnBattle(GameObject target, int value, Enum @enum)
     {
         enemy = target.transform.position;
         player = GameObject.FindGameObjectWithTag("Player").transform.position;

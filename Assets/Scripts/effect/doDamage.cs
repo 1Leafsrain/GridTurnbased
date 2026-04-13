@@ -1,21 +1,38 @@
 
+using System;
 using UnityEngine;
 
-
+public enum UserType { player, enemy }
 public class doDamage : PlainEffect
 {
+    
+    public UserType UserType;
     public int interval;
     public int Damage = 1;
     public int afterBattleDamage = 2;
-    public Target enemyCard;
+    public EnemyCard enemyCard;
+    public PlayersStat playerCard;
     //private int damageAmount = 1;
-    public override void OnBattle(GameObject target, int value)
+    public override void OnBattle(GameObject target, int value, Enum @enum)
     {
-        enemyCard = target.GetComponent<Target>();
+        enemyCard = target.GetComponent<EnemyCard>();
+        playerCard = target.GetComponent<PlayersStat>();
         GameObject enemyCardObject = target;
-        if (enemyCard != null)
+        if (enemyCard != null || playerCard != null)
         {
-            enemyCard.takeDamage(Damage);
+            switch (UserType)
+            {
+                case UserType.enemy:
+                    playerCard.TakeDamage(Damage);
+                    Debug.Log($"Piercing: langsung memberikan {Damage} damage ke {target.name}");
+                    break;
+                case UserType.player:
+                    enemyCard.TakeDamage(Damage);
+                    Debug.Log($"Piercing: langsung memberikan {Damage} damage ke {target.name}");
+                    break;
+                
+            }
+            
             Debug.Log($"Piercing: langsung memberikan {Damage} damage ke {target.name}");
         }
 

@@ -1,5 +1,6 @@
-using UnityEngine;
+using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class GridAreaDamage : PlainEffect
 {
@@ -8,7 +9,7 @@ public class GridAreaDamage : PlainEffect
     public bool includeCenter = true;
     private int damageAmount = 1;
 
-    public override void OnBattle(GameObject target, int value)
+    public override void OnBattle(GameObject target, int value, Enum @enum)
     {
         // 1. Dapatkan posisi grid target (pusat serangan)
         Vector2Int centerGrid = GenerateGridTile.WorldToGrid(target.transform.position);

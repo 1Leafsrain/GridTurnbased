@@ -1,8 +1,22 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class AigridMove : MonoBehaviour
 {
+    
+
+    [SerializeField] public TextMeshProUGUI title;
+    public List<PlainEffect> effects;
+    [SerializeField] public TextMeshProUGUI damages;
+    [SerializeField] public TextMeshProUGUI cost;
+    [SerializeField] public SpriteRenderer image;
+    
+    [SerializeField] public int attack;
+    [SerializeField] public int Area;
+    private Model model;
+
     [Header("Movement Settings")]
     public bool canMove;
     public float moveSpeed = 5f;
@@ -57,6 +71,20 @@ public class AigridMove : MonoBehaviour
         SnapToGridCenter();
     }
 
+    public void setup(Model model)
+    {
+        this.model = model;
+        //title.text = model.nama;
+        //cost.text = model.cost;
+        Area = model.Area;
+        attack = model.damage;
+        foreach (PlainEffect effect in model.effects)
+        {
+            effects = model.effects;
+        }
+        //image.sprite = model.gambar;
+        //damages.text = model.damage.ToString();
+    }
     void SnapToGridCenter()
     {
         // Hitung posisi grid dengan offset 0.5
@@ -370,7 +398,20 @@ public class AigridMove : MonoBehaviour
         inAction = true;
         if (playerStats != null)
         {
-            playerStats.TakeDamage(enemyCard.damage);
+            Debug.Log($"Enemy attacking player with damage: {enemyCard.damage}");
+            if (effects != null)
+           {
+                Debug.Log($"Applying {effects.Count} effects to player");
+                foreach (PlainEffect effect in effects)
+             {
+
+                Debug.Log("Applying effect: " + effect.GetType().Name + "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+                effect.OnBattle(player, attack, UserType.enemy);
+                Debug.Log($"Enemy attacked! Damage: {enemyCard.damage}");
+                }
+           }
+                    //Destroy(this.gameObject);
+                
             Debug.Log($"Enemy attacked! Damage: {enemyCard.damage}");
         }
 
@@ -390,7 +431,7 @@ public class AigridMove : MonoBehaviour
         isTurnEnding = true;
         canMove = false;
 
-        // Snap ke posisi tepat sebelum berhenti
+        
         SnapToExactPosition();
 
         var turnSystem = GameObject.FindGameObjectWithTag("TurnSystem")?.GetComponent<TurnSystem>();
@@ -404,13 +445,13 @@ public class AigridMove : MonoBehaviour
         isTurnEnding = false;
     }
 
-    // Helper functions
+    
     private int ManhattanDistance(Vector2Int a, Vector2Int b)
     {
         return Mathf.Abs(a.x - b.x) + Mathf.Abs(a.y - b.y);
     }
 
-    // Dipanggil oleh TurnSystem setiap awal giliran musuh
+    
     public void ResetAction()
     {
         
@@ -437,7 +478,7 @@ public class AigridMove : MonoBehaviour
         }
     }
 
-    // Debugging visual
+    
     void OnDrawGizmosSelected()
     {
         if (movePoint != null)

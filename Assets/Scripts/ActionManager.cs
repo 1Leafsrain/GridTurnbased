@@ -62,20 +62,23 @@ public class ActionManager : MonoBehaviour
                     i--;
                 }
 
-                StartCoroutine(ExampleCoroutine());
+                //StartCoroutine(ExampleCoroutine());
             }
+            else
+            {
+                effects.RemoveAt(i);
+                intervals.RemoveAt(i);
+                targets.RemoveAt(i);
+                i--;
+                Debug.LogAssertion("Effect or target is null, removing from list.");
+
+            }
+
 
         }
 
 
-    }
-    
 
-    IEnumerator ExampleCoroutine()
-    {
-
-        yield return new WaitForSeconds(2f);
 
     }
-    
 }

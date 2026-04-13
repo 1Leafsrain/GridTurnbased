@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Drawing;
 using System.Security.Principal;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -6,6 +7,15 @@ using UnityEngine.UIElements;
 
 public class spawnnerEnemy : MonoBehaviour
 {
+    //public List<AigridMove> cardDeck = new List<AigridMove>();
+    [SerializeField] public List<CardData> dataDeck = new List<CardData>();
+    [SerializeField] public List<CardData> cardDeck = new List<CardData>();
+    [SerializeField] public List<CardData> discarddeck = new List<CardData>();
+    [SerializeField] public List<AigridMove> cardDeckHand = new List<AigridMove>();
+    //[SerializeField] public List<Card> cardDeck = new List<Card>();
+    Model model;
+    public AigridMove card;
+
     GameObject player;
     public GameObject spawnObject;
     public GameObject Box;
@@ -37,11 +47,11 @@ public class spawnnerEnemy : MonoBehaviour
 
     public void enemyCheck()
     {
-        if (enemy == null || enemy.Length == 0)
+        if (enemy.Length == 0)
         {
             spawnDoor();
             player.GetComponent<GridMove>().freeMove = true;
-            Debug.LogWarning("Semua musuh mati, spawn pintu");
+            
         }
         else
         {
@@ -84,6 +94,7 @@ public class spawnnerEnemy : MonoBehaviour
     /// </summary>
     public void spawn()
     {
+        Debug.LogWarning("spawn)");
         if (allTiles == null || allTiles.Length == 0)
         {
             Debug.LogWarning("Tidak ada tile ditemukan");
@@ -96,9 +107,17 @@ public class spawnnerEnemy : MonoBehaviour
             Debug.LogWarning("Tidak ada tile valid untuk spawn (semua dikecualikan?)");
             return;
         }
-
+        Debug.LogWarning("spawn)");
+        int nomor = Random.Range(0, dataDeck.Count);
         int rand = Random.Range(0, validTiles.Count);
-        Instantiate(spawnObject, validTiles[rand].transform.position, Quaternion.identity);
+        var g = Instantiate(card, validTiles[rand].transform.position, Quaternion.identity);
+        g.gameObject.SetActive(true);
+        Debug.LogWarning("spawn)");
+        g.setup(new Model(dataDeck[nomor]));
+        discarddeck.Add(dataDeck[nomor]);
+        //g.transform.SetParent(validTiles[rand].transform);
+        cardDeckHand.Add(g);
+        //Instantiate(spawnObject, validTiles[rand].transform.position, Quaternion.identity);
     }
 
     public void spawnBox()
@@ -131,7 +150,7 @@ public class spawnnerEnemy : MonoBehaviour
         if (allTiles == null || allTiles.Length == 0) return;
         Debug.Log("Mencoba spawn pintu keluar... berhasil");
         int rand = Random.Range(0, allTiles.Length);
-        Instantiate(endStageObject, allTiles[rand].transform.position, Quaternion.identity);
+        Instantiate(endStageObject, allTiles[rand].transform.position + new Vector3(0, 0, 1f), Quaternion.identity);
         ended = true;
         turnSystem.playerObj.canMove = true;
     }
@@ -163,5 +182,6 @@ public class spawnnerEnemy : MonoBehaviour
             Destroy(obj);
         }
         player.GetComponent<GridMove>().freeMove = false;
+        ended = false;
     }
 }

@@ -308,8 +308,9 @@ public class TurnSystem : MonoBehaviour
 
     private IEnumerator StartEnemyTurn()
     {
-        ActionManager.Instance.ExecuteEffects();
         Debug.Log("Executing effects...");
+        ActionManager.Instance.ExecuteEffects();
+        
 
         yield return new WaitForSeconds(1f);
 

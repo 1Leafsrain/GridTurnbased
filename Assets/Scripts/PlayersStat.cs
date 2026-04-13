@@ -4,6 +4,7 @@ using UnityEngine;
 public class PlayersStat : MonoBehaviour
 {
     [SerializeField] public int health = 100;
+    public int curHealth;
     [SerializeField] public int mana = 20;
     [SerializeField] public List<GameObject> cardDeck;
     
@@ -15,11 +16,12 @@ public class PlayersStat : MonoBehaviour
     public void Awake()
     {
         healthText = GameObject.FindGameObjectWithTag("HealthText").GetComponent<DamageText>();
+        curHealth = health;
     }
 
     private void Update()
     {
-        healthText.GetHealth(health.ToString());
+        healthText.GetHealth(curHealth.ToString());
         //damageText.GetDamage(dmg.ToString());
     }
 
@@ -33,7 +35,7 @@ public class PlayersStat : MonoBehaviour
 
     public void TakeDamage(int dmg)
     {
-        health -= dmg;
+        curHealth -= dmg;
         damageText.GetDamage(dmg.ToString());
     }
 }
