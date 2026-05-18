@@ -45,7 +45,7 @@ public class AigridMove : MonoBehaviour
     private bool hasAttackedThisTurn = false;
     private bool isTurnEnding = false;
 
-    private GameObject player;
+    public GameObject player;
     private PlayersStat playerStats;
 
     // Grid offset untuk tengah tile
@@ -451,14 +451,16 @@ public class AigridMove : MonoBehaviour
         {
             Debug.Log($"Enemy attacking player with damage: {enemyCard.damage}");
             if (effects != null)
-           {
+            {
                 Debug.Log($"Applying {effects.Count} effects to player");
                 foreach (PlainEffect effect in effects)
-             {
+                {
 
-                Debug.Log("Applying effect: " + effect.GetType().Name + "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-                effect.OnBattle(player, this.gameObject, attack, UserType.enemy);
-                Debug.Log($"Enemy attacked! Damage: {enemyCard.damage}");
+                    //Debug.Log("Applying effect: " + effect.GetType().Name + "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+                    Debug.Log(player.name + " " + enemyCard.gameObject.name + " " + attack + " ");
+                    effect.OnBattle(player, enemyCard.gameObject, attack, UserType.enemy);
+                    curAction--;
+                    Debug.Log($"Enemy attacked! Damage: {enemyCard.damage}");
                 }
            }
                     //Destroy(this.gameObject);

@@ -311,17 +311,13 @@ public class Card : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
                 {
                     targets = player;
                     masukJarak = true;
-                    TransformCard = transform.position;
-                    targetPosition = transform.localScale;
                     
-                    transform.localScale = new Vector3(3f, 3f, 1.5f);
                 }
                 else
                 {
                     targets = null;
                     masukJarak = false;
-                    transform.position = TransformCard;
-                    transform.localScale = targetPosition;
+                    
                 }
                 break;
 
@@ -331,15 +327,11 @@ public class Card : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
                     targets = collision.gameObject;
                     enemys = collision.GetComponent<AigridMove>();
                     targetCard = collision.GetComponent<EnemyCard>();
-                    TransformCard = transform.position;
-                    targetPosition = transform.localScale;
-
-                    transform.localScale = new Vector3(3f, 3f, 1.5f);
+                    
                 }
                 else
                 {
-                    transform.position = TransformCard;
-                    transform.localScale = targetPosition;
+                    
                 }
                 break;
             case Targets.Tile:
@@ -396,40 +388,7 @@ public class Card : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        Debug.Log("Trigger Entered: " + collision.gameObject.name);
-        switch (targetType)
-        {
-            case Targets.player:
-                if (collision.gameObject.CompareTag("Player"))
-                {
-                    Debug.Log("masuk player" + player.transform.position);
-                    
-                    TransformCard = transform.position;
-                    targetPosition = transform.localScale;
-                    transform.localScale = new Vector3(3f, 3f, 1.5f);
-                }
-                break;
-                case Targets.enemy:
-                if (collision.gameObject.CompareTag("EnemyHand"))
-                {
-                    
-                    TransformCard = transform.position;
-                    targetPosition = transform.localScale;
-                    transform.localScale = new Vector3(3f, 3f, 1.5f);
-                }
-                break;
-            case Targets.Tile:
-                if (collision.gameObject.CompareTag("Tile"))
-                {
-                    Debug.Log("MASUKKKKKK" + collision.transform.position);
-                    TransformCard = transform.position;
-                    targetPosition = transform.localScale;
-                    transform.localScale = new Vector3(3f, 3f, 1.5f);
-                } break;
-        }
-    }
+    
 
     private void OnMouseUp()
     {
