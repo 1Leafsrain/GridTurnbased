@@ -26,7 +26,7 @@ public class View : MonoBehaviour
     {
         this.model = model;
         title.text = model.nama;
-        cost.text = model.cost;
+        cost.text = model.cost.ToString();
         image.sprite = model.gambar;
         damage.text = model.damage.ToString();
         Area.text = model.Area.ToString();

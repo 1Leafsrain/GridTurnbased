@@ -13,22 +13,28 @@ public class doDamage : PlainEffect
     public EnemyCard enemyCard;
     public PlayersStat playerCard;
     //private int damageAmount = 1;
-    public override void OnBattle(GameObject target, int value, Enum @enum)
+    public override void OnBattle(GameObject target, GameObject Doers, int value, Enum @enum)
     {
+        EnemyCard ai = target.GetComponent<EnemyCard>() ?? target.GetComponentInParent<EnemyCard>();
+
+        if (ai.BonusDMGMarks)
+        {
+            value += 1;
+        }
         enemyCard = target.GetComponent<EnemyCard>();
         playerCard = target.GetComponent<PlayersStat>();
         GameObject enemyCardObject = target;
         if (enemyCard != null || playerCard != null)
         {
-            switch (UserType)
+            switch (@enum)
             {
                 case UserType.enemy:
-                    playerCard.TakeDamage(Damage);
-                    Debug.Log($"Piercing: langsung memberikan {Damage} damage ke {target.name}");
+                    playerCard.TakeDamage(value);
+                    Debug.Log($"Piercing: langsung memberikan {value} damage ke {target.name}");
                     break;
                 case UserType.player:
-                    enemyCard.TakeDamage(Damage);
-                    Debug.Log($"Piercing: langsung memberikan {Damage} damage ke {target.name}");
+                    enemyCard.TakeDamage(value + PlayersStat.instance.damageModifier);
+                    Debug.Log($"Piercing: langsung memberikan {value} damage ke {target.name}");
                     break;
                 
             }
@@ -37,9 +43,10 @@ public class doDamage : PlainEffect
         }
 
 
-        ActionManager.Instance.daftarEffect(this, target, interval);
+        //ActionManager.Instance.daftarEffect(this, target, interval);
     }
 
+    /*public override void OnTurnStart(GameObject target, int turn)
     public override void OnAfterBattle(GameObject target, int turn)
     {
         interval = turn;
@@ -50,4 +57,6 @@ public class doDamage : PlainEffect
             Debug.Log($"After battle: {afterBattleDamage} damage to {target.name}");
         }
     }
+    */
+
 }

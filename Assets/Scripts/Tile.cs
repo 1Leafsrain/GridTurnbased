@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Burst.CompilerServices;
 using UnityEngine;
 
 public class Tile : MonoBehaviour
@@ -21,7 +22,13 @@ public class Tile : MonoBehaviour
         
             
     }
-
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("EnemyHand"))
+        {
+            Above = collision.gameObject;
+        }
+    }
     public GameObject GetAbove()
     {
         return Above;

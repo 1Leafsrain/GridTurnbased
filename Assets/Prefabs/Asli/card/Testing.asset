@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2b83a485d881284d95900c264361d8f, type: 3}
+  m_Name: Testing
+  m_EditorClassIdentifier: 
+  gambar: {fileID: 21300000, guid: 2e02ee962c0993d41a6dc048d2fecba5, type: 3}
+  cost: 01000000
+  damage: 1
+  nama: Test
+  Area: 10
+  desc: aaaaaaaa
+  TargetType: 2
+  ResourceType: 01000000
+  effects:
+  - rid: 9118873553095622664
+  references:
+    version: 2
+    RefIds:
+    - rid: 9118873553095622664
+      type: {class: SpawnObjectGrid, ns: , asm: Assembly-CSharp}
+      data:
+        damageBonus: 1
+        prefab: {fileID: 6294758472433573076, guid: e5f88e5bee62275438380e1971bc1255, type: 3}

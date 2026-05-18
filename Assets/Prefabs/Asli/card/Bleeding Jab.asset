@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2b83a485d881284d95900c264361d8f, type: 3}
+  m_Name: Bleeding Jab
+  m_EditorClassIdentifier: 
+  gambar: {fileID: 21300000, guid: e798bccea8c92b24ab598006ec7a8537, type: 3}
+  cost: 02000000
+  damage: 1
+  nama: Bleeding Jab
+  Area: 1
+  desc: Luka berdarah
+  TargetType: 1
+  ResourceType: 01000000
+  effects:
+  - rid: 9118873445225988104
+  - rid: 9118873445225988105
+  references:
+    version: 2
+    RefIds:
+    - rid: 9118873445225988104
+      type: {class: doDamage, ns: , asm: Assembly-CSharp}
+      data:
+        UserType: 0
+        interval: 0
+        Damage: 1
+        afterBattleDamage: 2
+        enemyCard: {fileID: 0}
+        playerCard: {fileID: 0}
+    - rid: 9118873445225988105
+      type: {class: Bleed, ns: , asm: Assembly-CSharp}
+      data:
+        interval: 1
+        bleedDamage: 1
+        type: 0

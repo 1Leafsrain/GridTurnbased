@@ -11,6 +11,8 @@ public class GridMove : MonoBehaviour
     public bool canMove;
 
     public LayerMask stop;
+
+    
     // Start is called once before the first execution of Update after the MonoBehaviour is created
 
     public DamageText actionText;
@@ -103,7 +105,7 @@ public class GridMove : MonoBehaviour
     }
 
 
-    void TryMove(Vector3 dir)
+    public void TryMove(Vector3 dir)
     {
         if (!Physics2D.OverlapCircle(movePoint.position + dir, 0.2f, stop))
         {
@@ -117,6 +119,11 @@ public class GridMove : MonoBehaviour
 
             movePoint.position += dir;
         }
+    }
+
+    public void JustMove(Vector3 pos)
+    {
+        movePoint.position = pos;
     }
 
     public void resetAction()

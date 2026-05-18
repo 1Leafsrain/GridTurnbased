@@ -16,9 +16,12 @@ public class EnemyCard : MonoBehaviour
     [SerializeField] private PlayersStat playerStat;
     [SerializeField] private GameObject[] hand;
 
+    public bool BonusDMGMarks;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        BonusDMGMarks = false;
         curHealth = maxHealth;
     }
 

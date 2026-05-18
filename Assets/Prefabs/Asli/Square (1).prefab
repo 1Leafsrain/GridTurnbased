@@ -149,12 +149,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayersStat
   health: 100
+  curHealth: 0
   mana: 20
+  curMana: 0
+  Ammo: 6
+  curAmmo: 0
+  sanity: 50
+  curSanity: 0
+  stamina: 50
+  curStamina: 0
   cardDeck:
   - {fileID: 4975713774275220871, guid: e275844cb043eca4f833f33ca390bd0b, type: 3}
   - {fileID: 4975713774275220871, guid: e275844cb043eca4f833f33ca390bd0b, type: 3}
   - {fileID: 4975713774275220871, guid: 5897c191556ee594f942ed91079cfc1a, type: 3}
+  damageModifier: 0
   damageText: {fileID: 5234632753253762113}
+  manaText: {fileID: 0}
+  sanityText: {fileID: 0}
+  staminaText: {fileID: 0}
+  ammoText: {fileID: 0}
   healthText: {fileID: 0}
   turnText: {fileID: 0}
 --- !u!61 &7605845294081822865

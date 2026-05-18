@@ -8,9 +8,12 @@ public class Model
 
     public Sprite gambar;
     public string nama;
-    public string cost;
+    public List<int> cost;
+    public string desc;
     public int damage;
     public int Area;
+    public Targets TargetType;
+    public List<ResourceType> ResourceType;
     public List<PlainEffect> effects => cardData.effects;
 
 
@@ -19,8 +22,11 @@ public class Model
         this.cardData = cardData;
         this.gambar = cardData.gambar;
         this.nama = cardData.nama;
-        this.cost = cardData.cost.ToString();
+        this.cost = cardData.cost;
         this.damage = cardData.damage;
         this.Area = cardData.Area;
+        this.desc = cardData.desc;
+        this.TargetType = cardData.TargetType;
+        this.ResourceType = cardData.ResourceType;
     }
 }

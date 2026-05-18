@@ -7,7 +7,7 @@ public class LeftCardDropArea : MonoBehaviour, ICardDropArea
 {
     public tipeSlot tipes;
 
-    public tipe kartuDalam;
+    //public tipe kartuDalam;
     TurnSystem turnSystem;
     public GameObject hand;
     public Card cards;
@@ -45,7 +45,7 @@ public class LeftCardDropArea : MonoBehaviour, ICardDropArea
             currentCard = card;
             card.transform.position = transform.position;
             currentCard = card.GetComponent<Card>();
-            kartuDalam = card.Tipes;
+            //kartuDalam = card.Tipes;
             //left = card.GetComponentInParent<LeftCardDropArea>();
             currentCard.transform.SetParent(this.transform);
             card.setCurrentDrop(this);

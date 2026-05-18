@@ -120,6 +120,63 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1001 &86697649
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 5383273931624552635, guid: bf989a488381eff42b0c729793e4cd81, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -13.62
+      objectReference: {fileID: 0}
+    - target: {fileID: 5383273931624552635, guid: bf989a488381eff42b0c729793e4cd81, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.47
+      objectReference: {fileID: 0}
+    - target: {fileID: 5383273931624552635, guid: bf989a488381eff42b0c729793e4cd81, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5383273931624552635, guid: bf989a488381eff42b0c729793e4cd81, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5383273931624552635, guid: bf989a488381eff42b0c729793e4cd81, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5383273931624552635, guid: bf989a488381eff42b0c729793e4cd81, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5383273931624552635, guid: bf989a488381eff42b0c729793e4cd81, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5383273931624552635, guid: bf989a488381eff42b0c729793e4cd81, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5383273931624552635, guid: bf989a488381eff42b0c729793e4cd81, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5383273931624552635, guid: bf989a488381eff42b0c729793e4cd81, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6390189269581202826, guid: bf989a488381eff42b0c729793e4cd81, type: 3}
+      propertyPath: m_Name
+      value: Square (2)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: bf989a488381eff42b0c729793e4cd81, type: 3}
 --- !u!1 &123253488
 GameObject:
   m_ObjectHideFlags: 0
@@ -560,6 +617,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 6294758472433573076, guid: e5f88e5bee62275438380e1971bc1255, type: 3}
     - target: {fileID: 8797315944032764272, guid: 15588f2f0adaf6548b871309645ef851, type: 3}
+      propertyPath: card
+      value: 
+      objectReference: {fileID: 1337330832}
+    - target: {fileID: 8797315944032764272, guid: 15588f2f0adaf6548b871309645ef851, type: 3}
       propertyPath: turnSystem
       value: 
       objectReference: {fileID: 6519583103476700635}
@@ -571,6 +632,22 @@ PrefabInstance:
       propertyPath: endStageObject
       value: 
       objectReference: {fileID: 8750517418610674138, guid: 1403ebb96b488564f8d90ae9c0f83a85, type: 3}
+    - target: {fileID: 8797315944032764272, guid: 15588f2f0adaf6548b871309645ef851, type: 3}
+      propertyPath: dataDeck.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8797315944032764272, guid: 15588f2f0adaf6548b871309645ef851, type: 3}
+      propertyPath: 'dataDeck.Array.data[0]'
+      value: 
+      objectReference: {fileID: 11400000, guid: aaba226fb2bf40542bad4b6160c83c72, type: 2}
+    - target: {fileID: 8797315944032764272, guid: 15588f2f0adaf6548b871309645ef851, type: 3}
+      propertyPath: 'dataDeck.Array.data[1]'
+      value: 
+      objectReference: {fileID: 11400000, guid: aaba226fb2bf40542bad4b6160c83c72, type: 2}
+    - target: {fileID: 8797315944032764272, guid: 15588f2f0adaf6548b871309645ef851, type: 3}
+      propertyPath: 'dataDeck.Array.data[2]'
+      value: 
+      objectReference: {fileID: 11400000, guid: aaba226fb2bf40542bad4b6160c83c72, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1041,6 +1118,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targets: []
   intervals: 
+--- !u!114 &1337330832 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6854373129775417204, guid: 3f24e9c3a6d3b6d4a9ae1b87ad26d04a, type: 3}
+  m_PrefabInstance: {fileID: 1019041336235577009}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36fe0d28fb1039d44ad1857b23832a55, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AigridMove
 --- !u!1 &1489440817
 GameObject:
   m_ObjectHideFlags: 0
@@ -2258,20 +2346,24 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3917708543252402217, guid: 2a08a7ad4fcccc1459740ea4ce761bf2, type: 3}
       propertyPath: cardData.Array.size
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3917708543252402217, guid: 2a08a7ad4fcccc1459740ea4ce761bf2, type: 3}
       propertyPath: 'cardData.Array.data[0]'
       value: 
-      objectReference: {fileID: 11400000, guid: 78982f4fba3cbd243830a751300d9f70, type: 2}
+      objectReference: {fileID: 11400000, guid: c541475b64c03394bb664cfa0065b526, type: 2}
     - target: {fileID: 3917708543252402217, guid: 2a08a7ad4fcccc1459740ea4ce761bf2, type: 3}
       propertyPath: 'cardData.Array.data[1]'
       value: 
-      objectReference: {fileID: 11400000, guid: 78982f4fba3cbd243830a751300d9f70, type: 2}
+      objectReference: {fileID: 11400000, guid: c541475b64c03394bb664cfa0065b526, type: 2}
     - target: {fileID: 3917708543252402217, guid: 2a08a7ad4fcccc1459740ea4ce761bf2, type: 3}
       propertyPath: 'cardData.Array.data[2]'
       value: 
-      objectReference: {fileID: 11400000, guid: 78982f4fba3cbd243830a751300d9f70, type: 2}
+      objectReference: {fileID: 11400000, guid: 99db1f39c99261d42b029ed1c0e4d024, type: 2}
+    - target: {fileID: 3917708543252402217, guid: 2a08a7ad4fcccc1459740ea4ce761bf2, type: 3}
+      propertyPath: 'cardData.Array.data[3]'
+      value: 
+      objectReference: {fileID: 11400000, guid: fc25d855b2c190540921cc93ee662fa5, type: 2}
     - target: {fileID: 3917708543252402217, guid: 2a08a7ad4fcccc1459740ea4ce761bf2, type: 3}
       propertyPath: 'HandPositionTrans.Array.data[0]'
       value: 
@@ -2347,7 +2439,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7257115571178544621, guid: 6c60b1e0006c8584c91b053364ace89b, type: 3}
       propertyPath: m_Name
-      value: GameObject
+      value: event system
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 1749743206343655997, guid: 6c60b1e0006c8584c91b053364ace89b, type: 3}
@@ -2752,3 +2844,4 @@ SceneRoots:
   - {fileID: 2101631322}
   - {fileID: 535458093}
   - {fileID: 6446408459603722674}
+  - {fileID: 86697649}

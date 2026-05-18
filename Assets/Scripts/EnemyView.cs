@@ -29,7 +29,7 @@ public class EnemyView : MonoBehaviour
     {
         this.model = model;
         title.text = model.nama;
-        cost.text = model.cost;
+        cost.text = model.cost.ToString();
         Area = model.Area;
         //attack = model.damage;
         foreach (PlainEffect effect in model.effects)

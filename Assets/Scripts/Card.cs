@@ -1,30 +1,52 @@
 
 using System.Collections.Generic;
+using System.Xml;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 
- public enum tipe { api, air, tanah }
 
-public class Card : MonoBehaviour
+
+public enum Targets { player, enemy, Tile }
+public enum ResourceType
+{
+    Ammo,
+    Stamina,
+    Sanity,
+    Health,
+    Mana
+}
+public class Card : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
     public float jaraks;
     public float[] kumpulanJaraks;
     public GameObject prefabReference;
 
-    
+    public Vector3 TransformCard;
+    public Vector3 targetPosition;
 
-    public  CardData cardData;
+    public CardData cardData;
 
+    public GameObject cardObject;
+
+    public Targets targetType;
+    public List<ResourceType> resourceType;
 
     [SerializeField] public TextMeshProUGUI title;
+    [SerializeField] public TextMeshProUGUI descs;
     [SerializeField] public TextMeshProUGUI damages;
-    [SerializeField] public TextMeshProUGUI cost;
+    [SerializeField] public int damage;
+    [SerializeField] public List<int> cost;
+    [SerializeField] public TextMeshProUGUI costText;
     [SerializeField] public SpriteRenderer image;
     [SerializeField] public List<PlainEffect> effects;
     [SerializeField] public int Area;
+
+    public float minFontSize = 10f;
+    public float maxFontSize = 40f;
 
     private Model model;
 
@@ -37,8 +59,12 @@ public class Card : MonoBehaviour
     public BoxCollider2D boxs;
     Card myCard;
     public EnemyCard other;
+    public PlayersStat otherP;
+    public Tile otherT;
     private LeftCardDropArea currntDorpArea;
 
+    public int MaxMana;
+    public int curMana;
     public int maxHealth = 100;
     public int curHealth = 100;
     public int attack;
@@ -46,7 +72,7 @@ public class Card : MonoBehaviour
     Collider2D triggerCol;
     public EnemyCard targetCard;
     public GameObject targets;
-    public int damage = 10;
+
     public int target = 1;
     public int jarakArea;
     public bool masukJarak;
@@ -64,25 +90,43 @@ public class Card : MonoBehaviour
     public bool set;
     public bool bisaDropefek;
 
-    public tipe Tipes;
+
     public tipeSlot TipeSlot;
 
     public GameObject[] HandPosition;
     [SerializeField] public RightCardDropArea[] HandSlot;
     public Transform[] HandPositionTrans;
     [SerializeField] private int maxHandSize;
+    public Camera camera;
+
+    public PlayersStat Players = PlayersStat.instance;
 
     public void Start()
     {
+
+        camera = Camera.main;
         masukJarak = false;
-        box =  GetComponent<BoxCollider2D>();
+        //box = GetComponent<BoxCollider2D>();
         curHealth = maxHealth;
+        curMana = MaxMana;
+
         fullss = false;
         set = true;
     }
+    public void Fit()
+    {
+        float size = maxFontSize;
+        costText.enableAutoSizing = true;
+        costText.fontSizeMin = minFontSize;
+        costText.fontSizeMax = maxFontSize;
+        costText.fontSize = size;
 
+        // TMP akan menyesuaikan sendiri selama Auto Size aktif
+        costText.ForceMeshUpdate();
+    }
     void Awake()
     {
+
         cekPlayer();
         triggerCol = GetComponent<Collider2D>();
         col = GetComponent<Collider2D>();
@@ -93,14 +137,34 @@ public class Card : MonoBehaviour
     {
         this.model = model;
         title.text = model.nama;
-        cost.text = model.cost;
+
+        costText.text = "";
+        for (int i = 0; i < model.cost.Count; i++)
+        {
+            Debug.Log("Cost: " + model.cost[i] + " " + model.ResourceType[i]);
+            costText.text += model.cost[i].ToString() + " " + model.ResourceType[i].ToString();
+        }
+        Fit();
+        cost = model.cost;
         Area = model.Area;
+        targetType = model.TargetType;
+        resourceType = model.ResourceType;
+        if (model.desc != null)
+        {
+            descs.text = model.desc;
+        }
+        else
+        {
+            descs.text = "No description";
+        }
+        damages.text = model.damage.ToString();
         attack = model.damage;
         foreach (PlainEffect effect in model.effects)
         {
+
             effects = model.effects;
         }
-        //image.sprite = model.gambar;
+        image.sprite = model.gambar;
         //damages.text = model.damage.ToString();
     }
     public void cekPlayer()
@@ -111,7 +175,8 @@ public class Card : MonoBehaviour
     public void Update()
     {
         CalculateAndMove();
-        
+
+
 
         //CalculateAndMove();
         if (curHealth <= 0)
@@ -120,15 +185,43 @@ public class Card : MonoBehaviour
         }
     }
 
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        // Check if the button pressed was the Right Mouse Button
+        if (eventData.button == PointerEventData.InputButton.Right)
+        {
+
+            TransformCard = transform.position;
+            targetPosition = transform.localScale;
+            transform.position = new Vector3(camera.transform.position.x, camera.transform.position.y, camera.transform.position.z + 1f);
+            transform.localScale = new Vector3(3f, 3f, 1.5f);
+        }
+
+    }
+    public void OnPointerUp(PointerEventData eventData)
+    {
+        if (eventData.button == PointerEventData.InputButton.Right)
+        {
+            transform.position = TransformCard;
+            transform.localScale = targetPosition;
+        }
+    }
+
+
     void OnMouseDown()
     {
+        if (Input.GetMouseButtonDown(1)) return;
         startDragPosition = transform.position;
-        transform.position = GetMousePositionInWorldSpace(); 
+        transform.position = GetMousePositionInWorldSpace();
     }
+
+
 
     private void OnMouseDrag()
     {
-        
+        TransformCard = transform.position;
+        targetPosition = transform.localScale;
+        transform.localScale = new Vector3(0.6f, 0.6f, 1.5f);
         transform.position = GetMousePositionInWorldSpace();
         if (currntDorpArea != null)
         {
@@ -138,109 +231,500 @@ public class Card : MonoBehaviour
         Vector2 center = box.transform.TransformPoint(box.offset);
         Vector2 size = Vector2.Scale(box.size, box.transform.lossyScale);
         float angle = transform.eulerAngles.z;
-        
-        Collider2D hit = Physics2D.OverlapBox(center, size, angle);
-        other = null;
-        if (hit != null && hit.gameObject.CompareTag("EnemyHand"))
-        {
-            
-            other = hit.GetComponent<EnemyCard>();
-            if (other != null)
-                other.TakeDamage(1);
 
-        }
-        else
+        Collider2D[] hits = Physics2D.OverlapBoxAll(center, size, angle);
+        Collider2D hit = null;
+        foreach (var h in hits)
         {
-            other = null;
+            if (h.gameObject != this.gameObject)
+            {
+                hit = h;
+                break;
+            }
         }
+        other = null;
+        otherP = null;
+        otherT = null;
+        switch (targetType)
+        {
+            case Targets.player:
+                if (hit != null && hit.gameObject.CompareTag("Player"))
+                {
+                    otherP = hit.GetComponent<PlayersStat>();
+
+                }
+                else
+                {
+                    otherP = null;
+                }
+                break;
+            case Targets.enemy:
+                if (hit != null && hit.gameObject.CompareTag("EnemyHand"))
+                {
+                    other = hit.GetComponent<EnemyCard>();
+
+                }
+                else
+                {
+                    other = null;
+                }
+                break;
+            case Targets.Tile:
+                if (hit != null && hit.gameObject.CompareTag("Tile"))
+                {
+                    otherT = hit.GetComponent<Tile>();
+                    targets = hit.gameObject;
+                    masukJarak = true;
+                    
+                }
+                else
+                {
+                    otherT = null;
+                    targets = null;
+                    masukJarak = false;
+                    
+                }
+                break;
+        }
+
+
     }
-   
+
     public void OnEndDrag(PointerEventData e)
     {
-        
+        transform.position = TransformCard;
+        transform.localScale = targetPosition;
     }
 
     public void setCurrentDrop(LeftCardDropArea leftCardDropArea)
     {
-        
+
         currntDorpArea = leftCardDropArea;
     }
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("EnemyHand"))
+        switch (targetType)
         {
-            //Debug.Log("kacau men");
-            targets = collision.gameObject;
-            enemys = collision.GetComponent<AigridMove>();
-            targetCard = collision.GetComponent<EnemyCard>();
-            
+            case Targets.player:
+                if (collision.gameObject.CompareTag("Player"))
+                {
+                    targets = player;
+                    masukJarak = true;
+                    TransformCard = transform.position;
+                    targetPosition = transform.localScale;
+                    
+                    transform.localScale = new Vector3(3f, 3f, 1.5f);
+                }
+                else
+                {
+                    targets = null;
+                    masukJarak = false;
+                    transform.position = TransformCard;
+                    transform.localScale = targetPosition;
+                }
+                break;
+
+            case Targets.enemy:
+                if (collision.gameObject.CompareTag("EnemyHand"))
+                {
+                    targets = collision.gameObject;
+                    enemys = collision.GetComponent<AigridMove>();
+                    targetCard = collision.GetComponent<EnemyCard>();
+                    TransformCard = transform.position;
+                    targetPosition = transform.localScale;
+
+                    transform.localScale = new Vector3(3f, 3f, 1.5f);
+                }
+                else
+                {
+                    transform.position = TransformCard;
+                    transform.localScale = targetPosition;
+                }
+                break;
+            case Targets.Tile:
+                if (collision.gameObject.CompareTag("Tile"))
+                {
+                    targets = collision.gameObject;
+                    masukJarak = true;
+                    
+                }
+                else
+                {
+                    targets = null;
+                    masukJarak = false;
+                    
+                }
+                break;
         }
+
     }
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("EnemyHand"))
+        switch (targetType)
         {
-            targets = null;
-            targetCard = null;
-            
+            case Targets.player:
+                if (collision.gameObject.CompareTag("Player"))
+                {
+                    targets = null;
+                    targetCard = null;
+                    transform.position = TransformCard;
+                    transform.localScale = targetPosition;
+                }
+                break;
+            case Targets.enemy:
+                if (collision.gameObject.CompareTag("EnemyHand"))
+                {
+
+                    targets = null;
+                    targetCard = null;
+                    transform.position = TransformCard;
+                    transform.localScale = targetPosition;
+                }
+                break;
+            case Targets.Tile:
+                if (collision.gameObject.CompareTag("Tile"))
+                {
+                    targets = null;
+                    targetCard = null;
+                    transform.position = TransformCard;
+                    transform.localScale = targetPosition;
+                }
+                break;
+        }
+        
+        
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        Debug.Log("Trigger Entered: " + collision.gameObject.name);
+        switch (targetType)
+        {
+            case Targets.player:
+                if (collision.gameObject.CompareTag("Player"))
+                {
+                    Debug.Log("masuk player" + player.transform.position);
+                    
+                    TransformCard = transform.position;
+                    targetPosition = transform.localScale;
+                    transform.localScale = new Vector3(3f, 3f, 1.5f);
+                }
+                break;
+                case Targets.enemy:
+                if (collision.gameObject.CompareTag("EnemyHand"))
+                {
+                    
+                    TransformCard = transform.position;
+                    targetPosition = transform.localScale;
+                    transform.localScale = new Vector3(3f, 3f, 1.5f);
+                }
+                break;
+            case Targets.Tile:
+                if (collision.gameObject.CompareTag("Tile"))
+                {
+                    Debug.Log("MASUKKKKKK" + collision.transform.position);
+                    TransformCard = transform.position;
+                    targetPosition = transform.localScale;
+                    transform.localScale = new Vector3(3f, 3f, 1.5f);
+                } break;
         }
     }
 
     private void OnMouseUp()
     {
-        if (targetCard != null) 
+        var playerStats = player.GetComponent<PlayersStat>();
+        if (Input.GetMouseButtonDown(1)) return;
+        switch (targetType)
         {
-            if(set == true && masukJarak == true)
-            {
-                if (effects != null)
+            case Targets.player:
+                if (otherP != null)
                 {
-                    foreach (PlainEffect effect in effects)
+                    if (set == true && masukJarak == true)
                     {
-                        Debug.Log("Applying effect: " + effect.GetType().Name);
-                        effect.OnBattle(targets, attack, UserType.player);
+                        if (effects != null)
+                        {
+                            foreach (PlainEffect effect in effects)
+                            {
+                                for (int i = 0; i < resourceType.Count; i++)
+                                    switch (resourceType[i])
+                                    {
+                                        case ResourceType.Stamina:
+                                            if (playerStats.curStamina < cost[i])
+                                            {
+                                                Debug.Log("Not enough Stamina to play this card.");
+                                                return;
+                                            }
+                                            break;
+                                        case ResourceType.Sanity:
+                                            if (playerStats.curSanity < cost[i])
+                                            {
+                                                Debug.Log("Not enough sanity to play this card.");
+                                                return;
+                                            }
+                                            break;
+                                        case ResourceType.Ammo:
+                                            if (playerStats.curAmmo < cost[i])
+                                            {
+                                                Debug.Log("Not enough Ammo to play this card.");
+                                                return;
+                                            }
+                                            break;
+                                        case ResourceType.Health:
+                                            if (playerStats.curHealth < cost[i])
+                                            {
+                                                Debug.Log("Not enough Health to play this card.");
+                                                return;
+                                            }
+                                            break;
+                                        case ResourceType.Mana:
+                                            if (playerStats.curMana < cost[i])
+                                            {
+                                                Debug.Log("Not enough Mana to play this card.");
+                                                return;
+                                            }
+                                            break;
+                                    }
+                                Debug.Log("Applying effect: " + effect.GetType().Name);
+                                effect.OnBattle(targets, player, attack, UserType.player);
+                                for (int i = 0; i < resourceType.Count; i++)
+                                    switch (resourceType[i])
+                                    {
+                                        case ResourceType.Stamina:
+                                            playerStats.curStamina -= cost[i]; break;
+                                        case ResourceType.Sanity:
+                                            playerStats.curSanity -= cost[i]; break;
+                                        case ResourceType.Ammo:
+                                            playerStats.curAmmo -= cost[i]; break;
+                                        case ResourceType.Health:
+                                            playerStats.curHealth -= cost[i]; break;
+                                        case ResourceType.Mana:
+                                            playerStats.curMana -= cost[i]; break;
+                                    }
+                            }
+                        }
+                        Destroy(this.gameObject);
                     }
                 }
-                Destroy(this.gameObject);
-            }
-            
-        }
-        col.enabled = false;
+                break;
 
-        try
-        {
-
-            hitcollider = Physics2D.OverlapPoint(new Vector2(transform.position.x, transform.position.y));
-            if (hitcollider != null && hitcollider.TryGetComponent(out ICardDropArea cardDropArea) && hitcollider.TryGetComponent(out LeftCardDropArea LeftcardDropArea))
-            {
-                if (LeftcardDropArea.tipes == TipeSlot)
+            case Targets.enemy:
+                if (targetCard != null)
                 {
-                    cardDropArea.OnCardDrop(this, true);
-                    //this.transform.parent = null;
+                    if (set == true && masukJarak == true)
+                    {
+                        if (effects != null)
+                        {
+                            foreach (PlainEffect effect in effects)
+                            {
+
+                                for (int i = 0; i < resourceType.Count; i++)
+                                    switch (resourceType[i])
+                                    {
+
+                                        case ResourceType.Stamina:
+                                            if (playerStats.curStamina < cost[i])
+                                            {
+                                                Debug.Log("Not enough Stamina to play this card.");
+                                                return;
+                                            }
+                                            break;
+                                        case ResourceType.Sanity:
+                                            if (playerStats.curSanity < cost[i])
+                                            {
+                                                Debug.Log("Not enough sanity to play this card.");
+                                                return;
+                                            }
+                                            break;
+                                        case ResourceType.Ammo:
+                                            if (playerStats.curAmmo < cost[i])
+                                            {
+                                                Debug.Log("Not enough Ammo to play this card.");
+                                                return;
+                                            }
+                                            break;
+                                        case ResourceType.Health:
+                                            if (playerStats.curHealth < cost[i])
+                                            {
+                                                Debug.Log("Not enough Health to play this card.");
+                                                return;
+                                            }
+                                            break;
+                                        case ResourceType.Mana:
+                                            if (playerStats.curMana < cost[i])
+                                            {
+                                                Debug.Log("Not enough Mana to play this card.");
+                                                return;
+                                            }
+                                            break;
+
+                                    }
+                                Debug.Log("Applying effect: " + effect.GetType().Name);
+                                effect.OnBattle(targets, player, attack, UserType.player);
+                                for (int i = 0; i < resourceType.Count; i++)
+                                    switch (resourceType[i])
+                                    {
+                                        case ResourceType.Stamina:
+                                            playerStats.curStamina -= cost[i]; break;
+                                        case ResourceType.Sanity:
+                                            playerStats.curSanity -= cost[i]; break;
+                                        case ResourceType.Ammo:
+                                            playerStats.curAmmo -= cost[i]; break;
+                                        case ResourceType.Health:
+                                            playerStats.curHealth -= cost[i]; break;
+                                        case ResourceType.Mana:
+                                            playerStats.curMana -= cost[i]; break;
+                                    }
+                            }
+                        }
+                        Destroy(this.gameObject);
+                        return;
+                    }
+
                 }
-                else
+                col.enabled = false;
+
+                try
                 {
-                    transform.position = startDragPosition;
+
+                    hitcollider = Physics2D.OverlapPoint(new Vector2(transform.position.x, transform.position.y));
+                    if (hitcollider != null && hitcollider.TryGetComponent(out ICardDropArea cardDropArea) && hitcollider.TryGetComponent(out LeftCardDropArea LeftcardDropArea))
+                    {
+                        if (LeftcardDropArea.tipes == TipeSlot)
+                        {
+                            cardDropArea.OnCardDrop(this, true);
+                            //this.transform.parent = null;
+                        }
+                        else
+                        {
+                            transform.position = startDragPosition;
+                        }
+                        bisaDropefek = false;
+                    }
+
+                    else
+                    {
+                        bisaDropefek = true;
+                        transform.position = startDragPosition;
+
+
+
+                    }
                 }
-                bisaDropefek = false;
-            }
+                finally
+                {
+                    col.enabled = true;
+                }
+                break;
+            case Targets.Tile:
+                if (otherT != null)
+                {
+                    if (set == true)
+                    {
+                        if (effects != null)
+                        {
+                            foreach (PlainEffect effect in effects)
+                            {
+                                for (int i = 0; i < resourceType.Count; i++)
+                                    switch (resourceType[i])
+                                    {
+                                        case ResourceType.Stamina:
+                                            if (playerStats.curStamina < cost[i])
+                                            {
+                                                Debug.Log("Not enough Stamina to play this card.");
+                                                return;
+                                            }
+                                            break;
+                                        case ResourceType.Sanity:
+                                            if (playerStats.curSanity < cost[i])
+                                            {
+                                                Debug.Log("Not enough sanity to play this card.");
+                                                return;
+                                            }
+                                            break;
+                                        case ResourceType.Ammo:
+                                            if (playerStats.curAmmo < cost[i])
+                                            {
+                                                Debug.Log("Not enough Ammo to play this card.");
+                                                return;
+                                            }
+                                            break;
+                                        case ResourceType.Health:
+                                            if (playerStats.curHealth < cost[i])
+                                            {
+                                                Debug.Log("Not enough Health to play this card.");
+                                                return;
+                                            }
+                                            break;
+                                        case ResourceType.Mana:
+                                            if (playerStats.curMana < cost[i])
+                                            {
+                                                Debug.Log("Not enough Mana to play this card.");
+                                                return;
+                                            }
+                                            break;
+                                    }
+                                Debug.Log("Applying effect: " + effect.GetType().Name);
+                                effect.OnBattle(targets, player, attack, UserType.player);
+                                for (int i = 0; i < resourceType.Count; i++)
+                                    switch (resourceType[i])
+                                    {
+                                        case ResourceType.Stamina:
+                                            playerStats.curStamina -= cost[i]; break;
+                                        case ResourceType.Sanity:
+                                            playerStats.curSanity -= cost[i]; break;
+                                        case ResourceType.Ammo:
+                                            playerStats.curAmmo -= cost[i]; break;
+                                        case ResourceType.Health:
+                                            playerStats.curHealth -= cost[i]; break;
+                                        case ResourceType.Mana:
+                                            playerStats.curMana -= cost[i]; break;
+                                    }
+                            }
+                        }
+                        Destroy(this.gameObject);
+                        return;
+                    }
+                }
+                col.enabled = false;
 
-            else
-            {
-                bisaDropefek = true;
-                transform.position = startDragPosition;
+                try
+                {
+
+                    hitcollider = Physics2D.OverlapPoint(new Vector2(transform.position.x, transform.position.y));
+                    if (hitcollider != null && hitcollider.TryGetComponent(out ICardDropArea cardDropArea) && hitcollider.TryGetComponent(out LeftCardDropArea LeftcardDropArea))
+                    {
+                        if (LeftcardDropArea.tipes == TipeSlot)
+                        {
+                            cardDropArea.OnCardDrop(this, true);
+                            //this.transform.parent = null;
+                        }
+                        else
+                        {
+                            transform.position = startDragPosition;
+                        }
+                        bisaDropefek = false;
+                    }
+
+                    else
+                    {
+                        bisaDropefek = true;
+                        transform.position = startDragPosition;
 
 
 
-            }
+                    }
+                }
+                finally
+                {
+                    col.enabled = true;
+                }
+                break;
         }
-        finally
-        {
-            col.enabled = true;
-        }
+
     }
 
-    
+
     public Vector3 GetMousePositionInWorldSpace()
     {
         float dis = 10f;
@@ -256,7 +740,7 @@ public class Card : MonoBehaviour
 
     public void TakeDamage(int dmg)
     {
-        
+
         curHealth -= dmg;
         //playerk.curHealth = curHealth;
     }
@@ -270,35 +754,17 @@ public class Card : MonoBehaviour
             HandPosition[i].GetComponentInChildren<EnemyCard>();
             if (i == hitTarget)
             {
-                 HandPosition[hitTarget].GetComponent<EnemyCard>().TakeDamage(damage);
-                tipeSerangan();
+                HandPosition[hitTarget].GetComponent<EnemyCard>().TakeDamage(damage);
+
             }
             else
             {
-                
+
             }
         }
     }
 
-    public void tipeSerangan()
-    {
-       
-        switch (Tipes) 
-        {
-            case tipe.api:
-                Debug.Log("mateng cheff");
-                break;
 
-            case tipe.air:
-                Debug.Log("basahhh");
-                break;
-
-            case tipe.tanah:
-                Debug.Log("awww");
-                break;
-        }
-
-    }
 
     public void sets()
     {
@@ -312,22 +778,22 @@ public class Card : MonoBehaviour
 
     void CalculateAndMove()
     {
-        if (enemys != null) 
+        if (enemys != null && targetType == Targets.enemy)
         {
-            
-            bool anyInRange = false;
-            
-            
-                float dist = Vector2.Distance(player.transform.position, enemys.transform.position);
-                
 
-                if (dist <= Area)
-                    anyInRange = true;
-            
+            bool anyInRange = false;
+
+
+            float dist = Vector2.Distance(player.transform.position, enemys.transform.position);
+
+
+            if (dist <= Area)
+                anyInRange = true;
+
             masukJarak = anyInRange;
         }
 
-        
+
     }
 
 }

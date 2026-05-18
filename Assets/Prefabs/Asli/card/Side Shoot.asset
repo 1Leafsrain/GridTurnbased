@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2b83a485d881284d95900c264361d8f, type: 3}
+  m_Name: Side Shoot
+  m_EditorClassIdentifier: 
+  gambar: {fileID: 21300000, guid: 4351971d55580ca4fac3be46eac4d8e5, type: 3}
+  cost: 0100000002000000
+  damage: 2
+  nama: Side Shoot
+  Area: 4
+  desc: Pindah 1 tile ke kiri/kanan Lalu tembak target lurus Cocok buat reposition
+    sambil attack
+  TargetType: 1
+  ResourceType: 0000000001000000
+  effects:
+  - rid: 7211696262470696984
+  - rid: 7211696262470696985
+  references:
+    version: 2
+    RefIds:
+    - rid: 7211696262470696984
+      type: {class: Piercing, ns: , asm: Assembly-CSharp}
+      data:
+        damage: 2
+        UserType: 0
+        radius: 4
+        targets: {fileID: 0}
+    - rid: 7211696262470696985
+      type: {class: Step, ns: , asm: Assembly-CSharp}
+      data:
+        player: {fileID: 0}

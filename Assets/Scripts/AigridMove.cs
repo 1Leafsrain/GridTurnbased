@@ -5,14 +5,20 @@ using UnityEngine;
 
 public class AigridMove : MonoBehaviour
 {
-    
+    public enum VisionDirEnum { Up, Down, Left, Right }
+    public VisionDirEnum visionDir;
+    public Vector3 BeforeTargetPosition;
+    public Vector3 BagianKanan;
+    public Vector3 BagianKiri;
+    public Vector3 BagianDepan;
+    public Vector3 BagianBelakang;
 
     [SerializeField] public TextMeshProUGUI title;
-    public List<PlainEffect> effects;
+    [SerializeField] public List<PlainEffect> effects;
     [SerializeField] public TextMeshProUGUI damages;
     [SerializeField] public TextMeshProUGUI cost;
     [SerializeField] public SpriteRenderer image;
-    
+    public CardData cardData;
     [SerializeField] public int attack;
     [SerializeField] public int Area;
     private Model model;
@@ -47,6 +53,7 @@ public class AigridMove : MonoBehaviour
 
     void Start()
     {
+        visionDir = VisionDirEnum.Right;
         enemyCard = GetComponent<EnemyCard>();
         canMove = false;
         curAction = action;
@@ -69,6 +76,9 @@ public class AigridMove : MonoBehaviour
 
         // Snap posisi awal ke tengah grid (dengan offset 0.5)
         SnapToGridCenter();
+
+        // Inisialisasi BagianDepan/Belakang/Kanan/Kiri dari posisi awal
+        UpdateVisionPositions(transform.position);
     }
 
     public void setup(Model model)
@@ -80,6 +90,7 @@ public class AigridMove : MonoBehaviour
         attack = model.damage;
         foreach (PlainEffect effect in model.effects)
         {
+
             effects = model.effects;
         }
         //image.sprite = model.gambar;
@@ -128,6 +139,7 @@ public class AigridMove : MonoBehaviour
     void Update()
     {
         // Gerakkan musuh ke movePoint
+        BeforeTargetPosition = transform.position;
         this.transform.position = Vector3.MoveTowards(
             transform.position,
             movePoint.position,
@@ -384,13 +396,52 @@ public class AigridMove : MonoBehaviour
 
     void ExecuteMove(Vector3 targetPosition)
     {
-        // Pastikan targetPosition di tengah tile
         targetPosition = GetGridCenterPosition(targetPosition);
+
+        // Tentukan arah hadap berdasarkan arah gerak (gunakan movePoint, bukan BeforeTargetPosition)
+        if      (targetPosition.y > movePoint.position.y) visionDir = VisionDirEnum.Up;
+        else if (targetPosition.y < movePoint.position.y) visionDir = VisionDirEnum.Down;
+        else if (targetPosition.x > movePoint.position.x) visionDir = VisionDirEnum.Right;
+        else if (targetPosition.x < movePoint.position.x) visionDir = VisionDirEnum.Left;
 
         movePoint.position = targetPosition;
         curAction--;
 
-        Debug.Log($"Enemy moving to: {targetPosition}, Actions left: {curAction}");
+        // Update semua posisi vision berdasarkan tile tujuan
+        UpdateVisionPositions(targetPosition);
+
+        Debug.Log($"Enemy moving to: {targetPosition}, visionDir: {visionDir}, Actions left: {curAction}");
+    }
+
+    void UpdateVisionPositions(Vector3 pos)
+    {
+        switch (visionDir)
+        {
+            case VisionDirEnum.Right:
+                BagianDepan    = new Vector3(pos.x + 1f, pos.y,        pos.z);
+                BagianBelakang = new Vector3(pos.x - 1f, pos.y,        pos.z);
+                BagianKanan    = new Vector3(pos.x,       pos.y - 1f,  pos.z);
+                BagianKiri     = new Vector3(pos.x,       pos.y + 1f,  pos.z);
+                break;
+            case VisionDirEnum.Left:
+                BagianDepan    = new Vector3(pos.x - 1f, pos.y,        pos.z);
+                BagianBelakang = new Vector3(pos.x + 1f, pos.y,        pos.z);
+                BagianKanan    = new Vector3(pos.x,       pos.y + 1f,  pos.z);
+                BagianKiri     = new Vector3(pos.x,       pos.y - 1f,  pos.z);
+                break;
+            case VisionDirEnum.Up:
+                BagianDepan    = new Vector3(pos.x,       pos.y + 1f,  pos.z);
+                BagianBelakang = new Vector3(pos.x,       pos.y - 1f,  pos.z);
+                BagianKanan    = new Vector3(pos.x + 1f,  pos.y,       pos.z);
+                BagianKiri     = new Vector3(pos.x - 1f,  pos.y,       pos.z);
+                break;
+            case VisionDirEnum.Down:
+                BagianDepan    = new Vector3(pos.x,       pos.y - 1f,  pos.z);
+                BagianBelakang = new Vector3(pos.x,       pos.y + 1f,  pos.z);
+                BagianKanan    = new Vector3(pos.x - 1f,  pos.y,       pos.z);
+                BagianKiri     = new Vector3(pos.x + 1f,  pos.y,       pos.z);
+                break;
+        }
     }
 
     void AttackPlayer()
@@ -406,7 +457,7 @@ public class AigridMove : MonoBehaviour
              {
 
                 Debug.Log("Applying effect: " + effect.GetType().Name + "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-                effect.OnBattle(player, attack, UserType.enemy);
+                effect.OnBattle(player, this.gameObject, attack, UserType.enemy);
                 Debug.Log($"Enemy attacked! Damage: {enemyCard.damage}");
                 }
            }

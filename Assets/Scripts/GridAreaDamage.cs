@@ -9,7 +9,7 @@ public class GridAreaDamage : PlainEffect
     public bool includeCenter = true;
     private int damageAmount = 1;
 
-    public override void OnBattle(GameObject target, int value, Enum @enum)
+    public override void OnBattle(GameObject target, GameObject Doers, int value, Enum @enum)
     {
         // 1. Dapatkan posisi grid target (pusat serangan)
         Vector2Int centerGrid = GenerateGridTile.WorldToGrid(target.transform.position);
@@ -43,7 +43,7 @@ public class GridAreaDamage : PlainEffect
                     Target targetComp = obj.GetComponent<Target>();
                     if (targetComp != null)
                     {
-                        targetComp.takeDamage(value);
+                        targetComp.takeDamage(value + PlayersStat.instance.damageModifier);
                         hitTargets.Add(obj);
                         Debug.Log($"Damage ke {obj.name} di grid {tileGrid}");
                     }
