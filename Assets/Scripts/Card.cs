@@ -19,7 +19,7 @@ public enum ResourceType
     Health,
     Mana
 }
-public class Card : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
+public class Card : MonoBehaviour, IPointerDownHandler, IPointerUpHandler//, IEndDragHandler
 {
     public float jaraks;
     public float[] kumpulanJaraks;
@@ -54,6 +54,7 @@ public class Card : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     public bool fullss;
 
     private Vector3 startDragPosition;
+    private Vector3 initialScale;
 
     public BoxCollider2D box;
     public BoxCollider2D boxs;
@@ -145,8 +146,8 @@ public class Card : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             costText.text += model.cost[i].ToString() + " " + model.ResourceType[i].ToString();
         }
         Fit();
-        cost = model.cost;
-        Area = model.Area;
+            cost = model.cost;
+            Area = model.Area;
         targetType = model.TargetType;
         resourceType = model.ResourceType;
         if (model.desc != null)
@@ -187,10 +188,11 @@ public class Card : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
     public void OnPointerDown(PointerEventData eventData)
     {
+        Debug.Log("KONTOLLLLLLLLLLLLLLLLLL");
         // Check if the button pressed was the Right Mouse Button
         if (eventData.button == PointerEventData.InputButton.Right)
         {
-
+            
             TransformCard = transform.position;
             targetPosition = transform.localScale;
             transform.position = new Vector3(camera.transform.position.x, camera.transform.position.y, camera.transform.position.z + 1f);
@@ -200,6 +202,7 @@ public class Card : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     }
     public void OnPointerUp(PointerEventData eventData)
     {
+        
         if (eventData.button == PointerEventData.InputButton.Right)
         {
             transform.position = TransformCard;
@@ -212,6 +215,7 @@ public class Card : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         if (Input.GetMouseButtonDown(1)) return;
         startDragPosition = transform.position;
+        initialScale = transform.localScale;
         transform.position = GetMousePositionInWorldSpace();
     }
 
@@ -219,9 +223,7 @@ public class Card : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
     private void OnMouseDrag()
     {
-        TransformCard = transform.position;
-        targetPosition = transform.localScale;
-        transform.localScale = new Vector3(0.6f, 0.6f, 1.5f);
+        //transform.localScale = new Vector3(0.6f, 0.6f, 1.5f);
         transform.position = GetMousePositionInWorldSpace();
         if (currntDorpArea != null)
         {
@@ -251,6 +253,7 @@ public class Card : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
                 if (hit != null && hit.gameObject.CompareTag("Player"))
                 {
                     otherP = hit.GetComponent<PlayersStat>();
+                    Debug.Log("MEEEEMEEEEEKKKKKKKKKKKKKKKKKKKKKKKKKKKKK");
 
                 }
                 else
@@ -290,11 +293,14 @@ public class Card : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
     }
 
-    public void OnEndDrag(PointerEventData e)
-    {
-        transform.position = TransformCard;
-        transform.localScale = targetPosition;
-    }
+    //public void OnEndDrag(PointerEventData e)
+    //{
+    //    transform.position = TransformCard;
+    //    transform.localScale = targetPosition;
+
+       
+
+    //}
 
     public void setCurrentDrop(LeftCardDropArea leftCardDropArea)
     {
@@ -311,7 +317,7 @@ public class Card : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
                 {
                     targets = player;
                     masukJarak = true;
-                    
+                    Debug.Log("MASUK JARAK PLAYER");
                 }
                 else
                 {
@@ -360,8 +366,7 @@ public class Card : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
                 {
                     targets = null;
                     targetCard = null;
-                    transform.position = TransformCard;
-                    transform.localScale = targetPosition;
+                    
                 }
                 break;
             case Targets.enemy:
@@ -370,8 +375,7 @@ public class Card : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
                     targets = null;
                     targetCard = null;
-                    transform.position = TransformCard;
-                    transform.localScale = targetPosition;
+                    
                 }
                 break;
             case Targets.Tile:
@@ -379,8 +383,7 @@ public class Card : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
                 {
                     targets = null;
                     targetCard = null;
-                    transform.position = TransformCard;
-                    transform.localScale = targetPosition;
+                    
                 }
                 break;
         }
@@ -392,12 +395,25 @@ public class Card : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
     private void OnMouseUp()
     {
+        // Reset ke posisi dan skala awal
+        transform.position = startDragPosition;
+        transform.localScale = initialScale;
+
         var playerStats = player.GetComponent<PlayersStat>();
         if (Input.GetMouseButtonDown(1)) return;
         switch (targetType)
         {
             case Targets.player:
-                if (otherP != null)
+                if (otherP == null)
+                {
+                    Collider2D hit = Physics2D.OverlapPoint(new Vector2(transform.position.x, transform.position.y));
+                    if (hit != null && hit.gameObject.CompareTag("Player"))
+                    {
+                        otherP = hit.GetComponent<PlayersStat>();
+                        masukJarak = true;
+                    }
+                }
+                else if (otherP != null)
                 {
                     if (set == true && masukJarak == true)
                     {
@@ -557,6 +573,7 @@ public class Card : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
                         else
                         {
                             transform.position = startDragPosition;
+                            transform.localScale = initialScale;
                         }
                         bisaDropefek = false;
                     }
@@ -565,9 +582,7 @@ public class Card : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
                     {
                         bisaDropefek = true;
                         transform.position = startDragPosition;
-
-
-
+                        transform.localScale = initialScale;
                     }
                 }
                 finally
@@ -661,6 +676,7 @@ public class Card : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
                         else
                         {
                             transform.position = startDragPosition;
+                            transform.localScale = initialScale;
                         }
                         bisaDropefek = false;
                     }
@@ -669,9 +685,7 @@ public class Card : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
                     {
                         bisaDropefek = true;
                         transform.position = startDragPosition;
-
-
-
+                        transform.localScale = initialScale;
                     }
                 }
                 finally
@@ -680,7 +694,6 @@ public class Card : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
                 }
                 break;
         }
-
     }
 
 

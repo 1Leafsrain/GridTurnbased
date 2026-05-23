@@ -18,15 +18,19 @@ MonoBehaviour:
   nama: Test
   Area: 10
   desc: aaaaaaaa
-  TargetType: 2
+  TargetType: 0
   ResourceType: 01000000
   effects:
-  - rid: 9118873553095622664
+  - rid: 9118873856409862148
   references:
     version: 2
     RefIds:
-    - rid: 9118873553095622664
-      type: {class: SpawnObjectGrid, ns: , asm: Assembly-CSharp}
+    - rid: 9118873856409862148
+      type: {class: AddEvade, ns: , asm: Assembly-CSharp}
       data:
-        damageBonus: 1
-        prefab: {fileID: 6294758472433573076, guid: e5f88e5bee62275438380e1971bc1255, type: 3}
+        UserType: 0
+        interval: 1
+        TargetEnemy: {fileID: 0}
+        enemyCard: {fileID: 0}
+        playerCard: {fileID: 0}
+        t: {fileID: 0}

@@ -44,7 +44,7 @@ public class Piercing : PlainEffect
                     targets.GetComponent<EnemyCard>().TakeDamage(damage + PlayersStat.instance.damageModifier);
                     break;
                 case UserType.enemy:
-                    targets.GetComponent<PlayersStat>().TakeDamage(damage);
+                    targets.GetComponent<PlayersStat>().TakeDamage(damage, ai.EnemyAgility);
                     break;
             }
         }

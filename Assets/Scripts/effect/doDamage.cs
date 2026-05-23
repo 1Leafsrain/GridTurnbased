@@ -15,36 +15,37 @@ public class doDamage : PlainEffect
     //private int damageAmount = 1;
     public override void OnBattle(GameObject target, GameObject Doers, int value, Enum @enum)
     {
-        
-        enemyCard = target.GetComponent<EnemyCard>();
-        playerCard = target.GetComponent<PlayersStat>();
-        GameObject enemyCardObject = target;
-        if (enemyCard != null || playerCard != null)
+        switch (@enum)
         {
-            switch (@enum)
-            {
-                case UserType.enemy:
-                    playerCard.TakeDamage(value);
-                    Debug.Log($"Piercing: langsung memberikan {value} damage ke {target.name}");
-                    break;
-                case UserType.player:
-                    EnemyCard ai = target.GetComponent<EnemyCard>() ?? target.GetComponentInParent<EnemyCard>();
+            case UserType.enemy:
+                // Enemy menyerang player
+                enemyCard = Doers.GetComponent<EnemyCard>();     
+                playerCard = target.GetComponent<PlayersStat>(); 
 
-                    if (ai.BonusDMGMarks)
+                if (playerCard != null && enemyCard != null)
+                {
+                    playerCard.TakeDamage(value, enemyCard.EnemyAgility);
+                    Debug.Log($"Enemy damage: {value} to {target.name}");
+                }
+                break;
+
+            case UserType.player:
+                // Player menyerang enemy
+                enemyCard = target.GetComponent<EnemyCard>();
+                playerCard = Doers.GetComponent<PlayersStat>();
+
+                if (enemyCard != null && playerCard != null)
+                {
+                    if (enemyCard.BonusDMGMarks)
                     {
                         value += 1;
                     }
-                    enemyCard.TakeDamage(value + PlayersStat.instance.damageModifier);
-                    Debug.Log($"Piercing: langsung memberikan {value} damage ke {target.name}");
-                    break;
-                
-            }
-            
-            Debug.Log($"Piercing: langsung memberikan {Damage} damage ke {target.name}");
+                    enemyCard.TakeDamage(value + playerCard.damageModifier);
+                    Debug.Log($"Player damage: {value} to {target.name}");
+                }
+                break;
+                //ActionManager.Instance.daftarEffect(this, target, interval);
         }
-
-
-        //ActionManager.Instance.daftarEffect(this, target, interval);
     }
 
     /*public override void OnTurnStart(GameObject target, int turn)

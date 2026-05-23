@@ -43,42 +43,21 @@ public class ActionManager : MonoBehaviour
 
     public void ExecuteEffects()
     {
-
         for (int i = 0; i < effects.Count; i++)
         {
             if (effects[i] != null && targets[i] != null)
             {
-                if (intervals[i] > 0)
-                {
-                    intervals[i]--;
-                    effects[i].OnAfterBattle(targets[i], intervals[i]);
-                    Debug.Log("Effect executed on target: " + targets[i].name);
-                }
-                else if (intervals[i] == 0)
-                {
-                    effects.RemoveAt(i);
-                    intervals.RemoveAt(i);
-                    targets.RemoveAt(i);
-                    i--;
-                }
-
-                //StartCoroutine(ExampleCoroutine());
+                effects[i].OnAfterBattle(targets[i], intervals[i]);
+                Debug.Log(effects[i] + " executed on target: " + targets[i].name);
             }
             else
             {
-                effects.RemoveAt(i);
-                intervals.RemoveAt(i);
-                targets.RemoveAt(i);
-                i--;
-                Debug.LogAssertion("Effect or target is null, removing from list.");
-
+                Debug.LogAssertion("kosong");
             }
-
-
         }
 
-
-
-
+        effects.Clear();
+        intervals.Clear();
+        targets.Clear();
     }
 }

@@ -9,6 +9,7 @@ public class AreaDamage : PlainEffect
 {
     public int radius = 1;
     public UserType UserType;
+    public int enemyAgility;
 
     public GameObject TargetEnemy;
     private int damageAmount = 1;
@@ -16,9 +17,11 @@ public class AreaDamage : PlainEffect
     public PlayersStat playerCard;
     public override void OnBattle(GameObject target, GameObject Doers, int value, Enum @enum)
     {
-
+        
         UserType = (UserType)@enum;
         enemyCard = target.GetComponent<EnemyCard>();
+        enemyAgility = enemyCard.EnemyAgility;
+        
         playerCard = target.GetComponent<PlayersStat>();
         for (int ax = -radius; ax <= radius; ax++) 
         { 
@@ -33,7 +36,7 @@ public class AreaDamage : PlainEffect
                 switch (@enum)
                     {
                         case UserType.enemy:
-                        TargetEnemy.GetComponent<PlayersStat>().TakeDamage(damageAmount );
+                        TargetEnemy.GetComponent<PlayersStat>().TakeDamage(damageAmount, enemyAgility);
                             Debug.Log($"Piercing: langsung memberikan {damageAmount} damage ke {target.name}");
                             break;
                         case UserType.player:

@@ -1,3 +1,4 @@
+using UnityEditor.Playables;
 using UnityEngine;
 
 
@@ -9,7 +10,10 @@ public class EnemyCard : MonoBehaviour
     public int curHealth;
     public int damage = 10;
     public int target = 1;
-    
+    public int EnemyAgility = 5;
+
+    public int fear = 0;
+
     public EnemyTipe enemyTipe;
 
     [SerializeField] private GameObject palyerHand;
@@ -23,6 +27,7 @@ public class EnemyCard : MonoBehaviour
     {
         BonusDMGMarks = false;
         curHealth = maxHealth;
+        fear = 0;
     }
 
     public void Awake()
@@ -68,7 +73,7 @@ public class EnemyCard : MonoBehaviour
 
     public void Attack()
     {
-               playerStat.TakeDamage(damage);
+               playerStat.TakeDamage(damage, EnemyAgility);
         
         Debug.Log("ngasih damage " + damage);
     }
@@ -81,9 +86,30 @@ public class EnemyCard : MonoBehaviour
         }
     }
 
+    public void AddFear(int value)
+    {
+        fear += value;
+        Debug.Log("Fear bertambah " + value + ", total fear: " + fear);
+    }
+    public void RemoveFear(int value)
+    {
+        fear -= value;
+        if (fear < 0) fear = 0;
+        Debug.Log("Fear berkurang " + value + ", total fear: " + fear);
+    }
+
 
     public void check()
     {
         Debug.Log("kacauuu");
+    }
+
+    public void addEvade(int value)
+    {
+        EnemyAgility += value;
+    }
+    public void removeEvade(int value)
+    {
+        EnemyAgility -= value;
     }
 }

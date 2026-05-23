@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class AigridMove : MonoBehaviour
@@ -30,6 +31,8 @@ public class AigridMove : MonoBehaviour
     public int action = 3;
     public LayerMask obstacleLayer;
     public float decisionInterval = 0.4f;
+    public bool stuned = false;
+    public bool Dizzy = false;
     [Header("Collision")]
     public LayerMask blockingLayers;
 
@@ -138,6 +141,10 @@ public class AigridMove : MonoBehaviour
 
     void Update()
     {
+        if (stuned) 
+            EndEnemyTurn();
+        //return;
+
         // Gerakkan musuh ke movePoint
         BeforeTargetPosition = transform.position;
         this.transform.position = Vector3.MoveTowards(
@@ -176,7 +183,6 @@ public class AigridMove : MonoBehaviour
 
     void SnapToExactPosition()
     {
-        // Snap ke posisi yang tepat
         transform.position = movePoint.position;
     }
 
@@ -396,21 +402,56 @@ public class AigridMove : MonoBehaviour
 
     void ExecuteMove(Vector3 targetPosition)
     {
-        targetPosition = GetGridCenterPosition(targetPosition);
+        if (Dizzy)
+        {
+            // Ambil grid cell POSISI SEKARANG (movePoint sebelum digerakkan)
+            Vector2Int currentCell = new Vector2Int(
+                Mathf.FloorToInt(movePoint.position.x),
+                Mathf.FloorToInt(movePoint.position.y)
+            );
 
-        // Tentukan arah hadap berdasarkan arah gerak (gunakan movePoint, bukan BeforeTargetPosition)
-        if      (targetPosition.y > movePoint.position.y) visionDir = VisionDirEnum.Up;
-        else if (targetPosition.y < movePoint.position.y) visionDir = VisionDirEnum.Down;
-        else if (targetPosition.x > movePoint.position.x) visionDir = VisionDirEnum.Right;
-        else if (targetPosition.x < movePoint.position.x) visionDir = VisionDirEnum.Left;
+            // Daftar arah acak, bisa ditambah Vector2Int.zero jika ingin ada kemungkinan diam
+            Vector2Int[] randomDirections = {
+        Vector2Int.up,
+        Vector2Int.down,
+        Vector2Int.left,
+        Vector2Int.right
+        //, Vector2Int.zero   // aktifkan jika ingin musuh kadang tidak bergerak
+    };
 
-        movePoint.position = targetPosition;
+            Vector2Int chosenDir = randomDirections[UnityEngine.Random.Range(0, randomDirections.Length)];
+            Vector2Int dizzyCell = currentCell + chosenDir;
+
+            // Konversi ke posisi dunia (tengah tile)
+            Vector3 dizzyWorldPos = new Vector3(dizzyCell.x + 0.5f, dizzyCell.y + 0.5f, movePoint.position.z);
+
+            // Cek tabrakan
+            Collider2D hit = Physics2D.OverlapCircle(dizzyWorldPos, 0.2f, blockingLayers);
+            if (hit == null || hit.gameObject == gameObject)
+            {
+                movePoint.position = dizzyWorldPos;
+            }
+            else
+            {
+                // Kalau nabrak, tetap di tile sekarang (atau bisa coba arah lain)
+                movePoint.position = movePoint.position;  // tidak pindah
+            }
+        }
+        else
+        {
+            movePoint.position = targetPosition;
+        }
+
+        // Tentukan arah hadap berdasarkan arah gerak sebenarnya
+        Vector3 moveDirection = movePoint.position - BeforeTargetPosition;
+        if (moveDirection.y > 0.1f) visionDir = VisionDirEnum.Up;
+        else if (moveDirection.y < -0.1f) visionDir = VisionDirEnum.Down;
+        else if (moveDirection.x > 0.1f) visionDir = VisionDirEnum.Right;
+        else if (moveDirection.x < -0.1f) visionDir = VisionDirEnum.Left;
+        // jika diam, arah tidak berubah
+
+        UpdateVisionPositions(movePoint.position);
         curAction--;
-
-        // Update semua posisi vision berdasarkan tile tujuan
-        UpdateVisionPositions(targetPosition);
-
-        Debug.Log($"Enemy moving to: {targetPosition}, visionDir: {visionDir}, Actions left: {curAction}");
     }
 
     void UpdateVisionPositions(Vector3 pos)
@@ -447,29 +488,23 @@ public class AigridMove : MonoBehaviour
     void AttackPlayer()
     {
         inAction = true;
-        if (playerStats != null)
+        if (playerStats != null && effects != null && effects.Count > 0)
         {
             Debug.Log($"Enemy attacking player with damage: {enemyCard.damage}");
-            if (effects != null)
+
+            foreach (PlainEffect effect in effects)
             {
-                Debug.Log($"Applying {effects.Count} effects to player");
-                foreach (PlainEffect effect in effects)
+                if (effect != null) 
                 {
-
-                    //Debug.Log("Applying effect: " + effect.GetType().Name + "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-                    Debug.Log(player.name + " " + enemyCard.gameObject.name + " " + attack + " ");
-                    effect.OnBattle(player, enemyCard.gameObject, attack, UserType.enemy);
-                    curAction--;
-                    Debug.Log($"Enemy attacked! Damage: {enemyCard.damage}");
+                    Debug.Log($"{player.name} hit by {enemyCard.gameObject.name}: {attack} damage");
+                    effect.OnBattle(player, gameObject, attack, UserType.enemy);
+                    Debug.Log($"Effect applied!");
                 }
-           }
-                    //Destroy(this.gameObject);
-                
-            Debug.Log($"Enemy attacked! Damage: {enemyCard.damage}");
-        }
+            }
 
-        curAction = 0;
-        hasAttackedThisTurn = true;
+            curAction = 0; 
+            hasAttackedThisTurn = true;
+        }
 
         if (curAction <= 0 && canMove)
         {
@@ -531,7 +566,16 @@ public class AigridMove : MonoBehaviour
         }
     }
 
-    
+    public void StunEnemy()
+    {
+        stuned = true;
+        //StartCoroutine(StunCoroutine(duration));
+    }
+    public void UnstunEnemy()
+    {
+        stuned = false;
+    }
+
     void OnDrawGizmosSelected()
     {
         if (movePoint != null)

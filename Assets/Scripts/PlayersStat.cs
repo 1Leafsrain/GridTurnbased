@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+
 
 
 
@@ -10,12 +12,19 @@ public class PlayersStat : MonoBehaviour
     public int curHealth;
     [SerializeField] public int mana = 20;
     [SerializeField] public int curMana;
+    [SerializeField] public int Agility = 2;
+    [SerializeField] public float MaxEvade = 75f;
+    [SerializeField] public int Strength = 5;
+    [SerializeField] public int Intelligence = 5;
+    [SerializeField] public int Luck = 5;
     [SerializeField] public int Ammo;
     [SerializeField] public int curAmmo;
     [SerializeField] public int sanity = 20;
     [SerializeField] public int curSanity;
     [SerializeField] public int stamina = 20;
     [SerializeField] public int curStamina;
+    [SerializeField] public int maxFear = 20;
+    [SerializeField] public int fear = 0;
     [SerializeField] public List<GameObject> cardDeck;
     
     public int damageModifier = 0;
@@ -58,8 +67,25 @@ public class PlayersStat : MonoBehaviour
 
     }
 
-    public void TakeDamage(int dmg)
+    public void TakeDamage(int dmg, int agilityE)
     {
+        int selisih = Agility - agilityE;
+        Debug.Log($"TakeDamage called. My Agility: {Agility}, Enemy Agility: {agilityE}, Selisih: {selisih}");
+
+        if (selisih > 0)
+        {
+            float evasionChance = Mathf.Min(selisih * 2f, MaxEvade);
+            float roll = UnityEngine.Random.Range(0f, 100f); // pastikan pakai 0-100
+            Debug.Log($"Evasion Chance: {evasionChance}%, Roll: {roll}");
+
+            if (roll < evasionChance)
+            {
+                Debug.Log("EVADE!");
+                damageText.GetDamage("Evade!");
+                return;
+            }
+        }
+
         curHealth -= dmg;
         damageText.GetDamage(dmg.ToString());
     }
@@ -103,5 +129,28 @@ public class PlayersStat : MonoBehaviour
     public void AddStamina(int cost)
     {
         curStamina += cost;
+    }
+
+    public void AddFear(int value)
+    {
+        fear += value;
+        if (fear > maxFear) fear = maxFear;
+        Debug.Log("Fear bertambah " + value + ", total fear: " + fear);
+    }
+
+    public void RemoveFear(int value)
+    {
+        fear -= value;
+        if (fear < 0) fear = 0;
+        Debug.Log("Fear berkurang " + value + ", total fear: " + fear);
+    }
+
+    public void addEvade(int value)
+    {
+        Agility += value;
+    }
+    public void removeEvade(int value)
+    {
+        Agility -= value;
     }
 }

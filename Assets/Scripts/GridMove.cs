@@ -9,6 +9,7 @@ public class GridMove : MonoBehaviour
     public int curAction;
     public bool freeMove;
     public bool canMove;
+    public bool stunned = false;
 
     public LayerMask stop;
 
@@ -32,11 +33,17 @@ public class GridMove : MonoBehaviour
         canMove = false;
         freeMove = false;
         movePoint.parent = null;
+        stunned = false;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if(stunned == true)
+        {
+            canMove = false;
+            curAction = 0;
+        }
         if (freeMove == true)
         {
             canMove = true;
@@ -129,5 +136,14 @@ public class GridMove : MonoBehaviour
     public void resetAction()
     {
         curAction = action;
+    }
+    public void StunPlayer()
+    {
+        stunned = true;
+        //StartCoroutine(StunCoroutine(duration));
+    }
+    public void UnstunPlayer()
+    {
+        stunned = false;
     }
 }

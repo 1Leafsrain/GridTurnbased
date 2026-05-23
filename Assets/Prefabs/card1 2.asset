@@ -13,11 +13,13 @@ MonoBehaviour:
   m_Name: card1 2
   m_EditorClassIdentifier: 
   gambar: {fileID: 21300000, guid: 192bca4594d04e447a1666c57c49f809, type: 3}
-  cost: 10
+  cost: 01000000
   damage: 8
   nama: Mana Rain
   Area: 1
   desc: Mengubah mana menjadi gas lalu membuat percikan dengan mana
+  TargetType: 0
+  ResourceType: 00000000
   effects:
   - rid: 7211696181103820813
   references:

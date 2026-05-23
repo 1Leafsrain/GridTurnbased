@@ -110,6 +110,7 @@ MonoBehaviour:
   curAction: 0
   freeMove: 0
   canMove: 0
+  stunned: 0
   stop:
     serializedVersion: 2
     m_Bits: 64
@@ -152,12 +153,18 @@ MonoBehaviour:
   curHealth: 0
   mana: 20
   curMana: 0
+  Agility: 2
+  Strength: 5
+  Intelligence: 5
+  Luck: 5
   Ammo: 6
   curAmmo: 0
   sanity: 50
   curSanity: 0
   stamina: 50
   curStamina: 0
+  maxFear: 20
+  fear: 0
   cardDeck:
   - {fileID: 4975713774275220871, guid: e275844cb043eca4f833f33ca390bd0b, type: 3}
   - {fileID: 4975713774275220871, guid: e275844cb043eca4f833f33ca390bd0b, type: 3}
