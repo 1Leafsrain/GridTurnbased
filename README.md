@@ -1,1 +1,2 @@
-Game TurnBased dan grid-based move, enemynya pake algoritma A*
+## Dokumentasi
+[Dokumentasi GridTurnbased (PDF)](Dokumentasi_GridTurnbased_Portofolio.pdf)
